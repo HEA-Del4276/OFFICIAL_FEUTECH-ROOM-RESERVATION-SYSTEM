@@ -72,3 +72,35 @@ This project is developed as part of academic coursework at FEU Tech.
 Student ID: 202410364@fit.edu.ph
 Course: CCS0015
 Institution: FEU Tech
+
+## Required Concepts to Apply 
+Your system must include and demonstrate the following:
+1. Functions
+    - Use modular functions for each major operation (e.g., addRecord(), deleteRecord(), searchRecord(), saveToFile(), loadFromFile(), etc.).
+    - Avoid writing everything in the main() function.
+2. Abstract Data Types (ADT)
+    - Implement your own user-defined data structures using class. Apply 3-file structure.
+3. Pointers
+    - Use pointers for dynamic memory allocation, parameter passing, or navigating linked lists.
+4. Linked List
+    - Use a singly or doubly linked list to manage a dynamic collection of records.
+5. Stack or Queue
+    - Use either a stack (e.g., undo actions, navigation history) or a queue (e.g., customer waiting list, order queue).
+6. File Handling
+    - Your system must be able to:
+        * Store data persistently in text files.
+        * Retrieve and display data from the files when the program runs again.
+
+## Main Menu Options and Programming constructs
+[1] - SEARCH ROOMS (Linked List)
+[2] - RESERVE ROOM (Linked List)
+[3] - ADD ROOM (Linked List)
+[4] - EDIT ROOM/RESERVATION (Linked List)
+[5] - DELETE ROOM (Linked List)
+[6] - CANCEL RESERVATION (Linked List)
+[7] - JOIN WAITLIST (Queue)
+[8] - VIEW AVAILABLE ROOMS (Linked List)
+[9] - VIEW MY RESERVATIONS (File Handling)
+[10] - VIEW ALL ROOMS/RESERVATIONS (File Handling)
+[11] - EXIT SYSTEM
+

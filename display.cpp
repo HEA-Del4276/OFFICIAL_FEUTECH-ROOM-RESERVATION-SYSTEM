@@ -135,7 +135,7 @@ int main(){
 			//1st Test Search Room: Found Available
 			cout << "  ----------------------------------------------------" << endl;	
 			cout << "  ****************************************************" << endl;	
-			cout << "\n  [RSYS: ENTER BOOK DETAILS]" << endl;
+			cout << "\n  [RSYS: ENTER ROOM DETAILS]" << endl;
 			
 			cout << "\n\t==============================" << endl;
 			cout << "\t|        TYPE OF ROOM        |" << endl;
