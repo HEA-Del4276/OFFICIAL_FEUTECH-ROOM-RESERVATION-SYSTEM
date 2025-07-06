@@ -328,105 +328,113 @@ void RoomReservation::cancelReservation() {
     cout << "  ****************************************************" << endl;	
     cout << "\n  [RSYS: CANCEL RESERVATION]" << endl;
     
-    string applicantName;
-    cout << "\n  [Enter Applicant's Name]: ";
-    cin.ignore();
-    getline(cin, applicantName);
+    cin.ignore(); // Clear input buffer once at the beginning
     
-    // Find reservations by name
-    vector<ReservationNode*> userReservations = findReservationsByName(applicantName);
-    
-    if (userReservations.empty()) {
-        cout << "\n  [RSYS: No reservations found for '" << applicantName << "' :C]" << endl;
-        return;
-    }
-    
-    cout << "\n  [RSYS: Reservation Found: " << userReservations.size() << " :D]" << endl;
-    
-    // Display all reservations for this user
-    for (int i = 0; i < userReservations.size(); i++) {
-        displayReservationDetails(*userReservations[i], i + 1);
-    }
-    
-    bool continueCancel = true;
-    while (continueCancel) {
-        int reservationChoice;
-        bool validChoice = false;
+    bool continueCancellation = true;
+    while (continueCancellation) {
+        string applicantName;
+        cout << "\n  [Enter Applicant's Name]: ";
+        getline(cin, applicantName);
         
-        while (!validChoice) {
-            cout << "\n  [Which reservation to cancel? (1-" << userReservations.size() << ")]: ";
-            if (cin >> reservationChoice) {
-                if (reservationChoice >= 1 && reservationChoice <= userReservations.size()) {
-                    validChoice = true;
-                }
-            }
-            if (!validChoice) {
-                cout << "  [Invalid choice. Please enter a number between 1-" << userReservations.size() << "]" << endl;
-                clearInput();
-            }
-        }
-        cin.ignore();
+        // Find reservations by name
+        vector<ReservationNode*> userReservations = findReservationsByName(applicantName);
         
-        // Confirmation
-        cout << "\n  [RSYS: CONFIRMATION]" << endl;
-        char confirm;
-        cout << "\n  [Confirm cancellation? (Y/N)]: ";
-        cin >> confirm;
-        cin.ignore();
-        
-        if (confirm == 'Y' || confirm == 'y') {
-            // Get the reservation to be cancelled
-            ReservationNode reservationToCancel = *userReservations[reservationChoice - 1];
+        if (userReservations.empty()) {
+            cout << "\n  [RSYS: No reservations found for '" << applicantName << "' :C]" << endl;
             
-            // Remove from linked list and update file
-            if (removeReservationFromList(reservationChoice - 1, applicantName)) {
-                updateReservationFile();
-                
-                cout << "\n  ====================================================";
-                cout << "\n   ------ RESERVATION SUCCESSFULLY CANCELLED! -------";
-                cout << "\n   [APPLICANT DETAILS]";
-                cout << "\n   Name: " << reservationToCancel.name;
-                cout << "\n   Student Number: " << reservationToCancel.studentNum;
-                cout << "\n   Program: " << reservationToCancel.program;
-                cout << "\n   Section: " << reservationToCancel.section;
-                cout << "\n   -------------------------------------------------- ";
-                cout << "\n   [ACTIVITY DETAILS]";
-                cout << "\n   Activity Name: " << reservationToCancel.activityName;
-                cout << "\n   Date (MM/DD/YYYY): " << reservationToCancel.activityDate;
-                cout << "\n   [Start time (0AM/0PM)]: " << reservationToCancel.activityStart;
-                cout << "\n   [End Time (0AM/0PM)]: " << reservationToCancel.activityEnd;
-                cout << "\n   [No. of Participants]: " << reservationToCancel.numparticipants;
-                cout << "\n   -------------------------------------------------- ";
-                cout << "\n   [ROOM DETAILS]";
-                cout << "\n   Type of Room: " << reservationToCancel.roomType;
-                cout << "\n   Room Floor & Name: " << reservationToCancel.roomName;
-                cout << "\n   -------------------------------------------------- ";
-                cout << "\n  ====================================================" << endl;
-            } else {
-                cout << "\n  [Error: Failed to cancel reservation]" << endl;
+            char tryAnother;
+            cout << "\n  [Try another name? (Y/N)]: ";
+            cin >> tryAnother;
+            cin.ignore();
+            
+            if (tryAnother != 'Y' && tryAnother != 'y') {
+                continueCancellation = false;
             }
-        } else {
-            cout << "\n  [Cancellation aborted.]" << endl;
+            continue;
         }
         
-        char cancelAnother;
-        cout << "\n  [Cancel another reservation? (Y/N)]: ";
-        cin >> cancelAnother;
-        cin.ignore();
+        cout << "\n  [RSYS: Reservation Found: " << userReservations.size() << " :D]" << endl;
         
-        if (cancelAnother != 'Y' && cancelAnother != 'y') {
-            continueCancel = false;
-        } else {
-            // Refresh the reservations list
-            userReservations = findReservationsByName(applicantName);
-            if (userReservations.empty()) {
-                cout << "\n  [No more reservations found for '" << applicantName << "']" << endl;
-                continueCancel = false;
-            } else {
-                cout << "\n  [RSYS: Remaining Reservations: " << userReservations.size() << "]" << endl;
-                for (int i = 0; i < userReservations.size(); i++) {
-                    displayReservationDetails(*userReservations[i], i + 1);
+        // Display all reservations for this user
+        for (int i = 0; i < userReservations.size(); i++) {
+            displayReservationDetails(*userReservations[i], i + 1);
+        }
+        
+        bool continueWithThisUser = true;
+        while (continueWithThisUser) {
+            int reservationChoice;
+            bool validChoice = false;
+            
+            while (!validChoice) {
+                cout << "\n  [Which reservation to cancel? (1-" << userReservations.size() << ")]: ";
+                if (cin >> reservationChoice) {
+                    if (reservationChoice >= 1 && reservationChoice <= userReservations.size()) {
+                        validChoice = true;
+                    }
                 }
+                if (!validChoice) {
+                    cout << "  [Invalid choice. Please enter a number between 1-" << userReservations.size() << "]" << endl;
+                    clearInput();
+                }
+            }
+            cin.ignore();
+            
+            // Confirmation
+            cout << "\n  [RSYS: CONFIRMATION]" << endl;
+            char confirm;
+            cout << "\n  [Confirm cancellation? (Y/N)]: ";
+            cin >> confirm;
+            cin.ignore();
+            
+            if (confirm == 'Y' || confirm == 'y') {
+                // Get the reservation to be cancelled
+                ReservationNode reservationToCancel = *userReservations[reservationChoice - 1];
+                
+                // Remove from linked list and update file
+                if (removeReservationFromList(reservationChoice - 1, applicantName)) {
+                    updateReservationFile();
+                    
+                    cout << "\n  ====================================================";
+                    cout << "\n   ------ RESERVATION SUCCESSFULLY CANCELLED! -------";
+                    cout << "\n   [APPLICANT DETAILS]";
+                    cout << "\n   Name: " << reservationToCancel.name;
+                    cout << "\n   Student Number: " << reservationToCancel.studentNum;
+                    cout << "\n   Program: " << reservationToCancel.program;
+                    cout << "\n   Section: " << reservationToCancel.section;
+                    cout << "\n   -------------------------------------------------- ";
+                    cout << "\n   [ACTIVITY DETAILS]";
+                    cout << "\n   Activity Name: " << reservationToCancel.activityName;
+                    cout << "\n   Date (MM/DD/YYYY): " << reservationToCancel.activityDate;
+                    cout << "\n   [Start time (0AM/0PM)]: " << reservationToCancel.activityStart;
+                    cout << "\n   [End Time (0AM/0PM)]: " << reservationToCancel.activityEnd;
+                    cout << "\n   [No. of Participants]: " << reservationToCancel.numparticipants;
+                    cout << "\n   -------------------------------------------------- ";
+                    cout << "\n   [ROOM DETAILS]";
+                    cout << "\n   Type of Room: " << reservationToCancel.roomType;
+                    cout << "\n   Room Floor & Name: " << reservationToCancel.roomName;
+                    cout << "\n   -------------------------------------------------- ";
+                    cout << "\n  ====================================================" << endl;
+                    
+                    char cancelAnother;
+                    cout << "\n  [Cancel another reservation? (Y/N)]: ";
+                    cin >> cancelAnother;
+                    cin.ignore();
+                    
+                    if (cancelAnother != 'Y' && cancelAnother != 'y') {
+                        continueCancellation = false;
+                        continueWithThisUser = false;
+                    } else {
+                        // Exit this user's session and ask for new applicant name
+                        continueWithThisUser = false;
+                    }
+                } else {
+                    cout << "\n  [Error: Failed to cancel reservation]" << endl;
+                    continueWithThisUser = false;
+                }
+            } else {
+                cout << "\n  [Cancellation aborted.]" << endl;
+                // When cancellation is aborted, go back to asking for applicant name
+                continueWithThisUser = false;
             }
         }
     }
