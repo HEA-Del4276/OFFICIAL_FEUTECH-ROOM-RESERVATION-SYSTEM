@@ -22,6 +22,53 @@ A comprehensive room reservation system developed for FEU Tech students and facu
 
 - C++ compiler (GCC, MinGW, or Visual Studio)
 - Basic knowledge of C++ programming
+- Git installed on your system
+- Visual Studio Code (recommended)
+
+### 💡 AI Development Assistance
+**Strongly Recommended**: Use **GitHub Copilot AI** directly inside Visual Studio Code instead of external AI tools. This provides:
+- Better code context understanding
+- Seamless integration with your development environment
+- More accurate suggestions based on your project structure
+- Real-time coding assistance without switching applications
+
+### Setting Up the Repository in Visual Studio Code
+
+#### 1. Clone the Repository
+Open Visual Studio Code and follow these steps:
+
+**Option A: Using VS Code's Built-in Git**
+1. Press `Ctrl+Shift+P` (Windows) to open Command Palette
+2. Type "Git: Clone" and select it
+3. Enter the repository URL: `https://github.com/HEA-Del4276/OFFICIAL_FEUTECH-ROOM-RESERVATION-SYSTEM.git`
+4. Choose a folder location on your computer
+5. Click "Open" when prompted
+
+**Option B: Using Terminal/Command Prompt**
+```bash
+git clone https://github.com/HEA-Del4276/OFFICIAL_FEUTECH-ROOM-RESERVATION-SYSTEM.git
+cd OFFICIAL_FEUTECH-ROOM-RESERVATION-SYSTEM
+code .
+```
+
+#### 2. Pulling Latest Changes
+To get the latest updates from the repository:
+
+**In VS Code:**
+1. Open the Source Control panel (`Ctrl+Shift+G`)
+2. Click the "..." menu and select "Pull"
+
+**Or use Terminal:**
+```bash
+git pull origin main
+```
+
+#### 3. Important Notes
+⚠️ **READ-ONLY ACCESS**: Team members can clone and pull from this repository, but **cannot push changes** unless given explicit permission by the repository owner.
+
+- You can freely download and work with the code locally
+- To contribute changes, contact the repository owner for push permissions
+- Always pull latest changes before starting work to ensure you have the most recent version
 
 ### Compilation
 
@@ -53,11 +100,20 @@ The system provides a menu-driven interface with the following options:
 
 ## Project Structure
 
-```
-OFFICIAL ROOM RESERVATION-FINALS CODE/
-├── main.cpp          # Main program file
-└── README.md         # This file
-```
+### Core Files (Main Development)
+
+### OFFICIAL ROOM RESERVATION-FINALS CODE/
+├── main.cpp                     # Main program file - Entry point to run the application
+├── display.cpp                  # Expected output guide - Shows what the program output should look like (used for reference)
+├── RoomReservation.h            # Header file - Contains class declarations, function prototypes, and data structures
+├── RoomReservation.cpp          # Implementation file - Contains the actual implementation of all class methods and functions
+├── rooms-data-list.txt          # Room database - Stores all available rooms and their details
+├── reservation-data-list.txt    # Reservation database - Stores all active room reservations
+├── waitlist-data.txt            # Waitlist database - Stores users waiting for room availability
+└── README.md                    # Project documentation
+
+### Test Files (Sample Runs)
+Files named with "sample" prefix are test runs that demonstrate different program functionalities and expected behaviors. These files help in testing and validation of the system features.
 
 ## Contributing
 
