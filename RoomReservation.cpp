@@ -445,11 +445,12 @@ void RoomReservation::joinWaitlist() {
     cout << "  ****************************************************" << endl;
     cout << "\n  [RSYS: JOIN WAITLIST]" << endl;
     
+    cin.ignore(); // Clear input buffer once at the beginning
+    
     bool continueWaitlist = true;
     while (continueWaitlist) {
         string roomToWaitlist;
         cout << "\n  [Enter room floor & name to waitlist]: ";
-        cin.ignore();
         getline(cin, roomToWaitlist);
         
         // Check if room exists in the file
