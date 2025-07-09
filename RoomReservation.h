@@ -139,6 +139,8 @@ class RoomReservation{
         
         string getRoomName() const;
         void setRoomName(const string& name);
+
+        string getTimeSlot(int choice);
         
         // Other getters and setters as needed...
     

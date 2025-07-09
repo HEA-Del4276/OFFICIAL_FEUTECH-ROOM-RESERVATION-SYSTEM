@@ -279,23 +279,137 @@ void RoomReservation::reserveRoom() {
     }
 }
 void RoomReservation::addRoom() {
-			cout << "  ----------------------------------------------------" << endl;	
-			cout << "  ****************************************************" << endl;	
-			cout << "\n  [RSYS: ENTER ROOM DETAILS]" << endl;
-			
-			cout << "\n\t==============================" << endl;
-			cout << "\t|        TYPE OF ROOM        |" << endl;
-			cout << "\t==============================" << endl;
-			cout << "\t|\t\t\t     |" << endl;
-			cout << "\t|  [1] CLASSROOM             |" << endl;
-			cout << "\t|  [2] ACTIVITY/EVENT ROOM   |" << endl;
-			cout << "\t|  [5] CANCEL PROCESS        |" << endl;  //After confirming to cancel, Return to Main Menu
-			cout << "\t|\t\t\t     |" << endl;
-			cout << "\t==============================" << endl;
-			
-			cout << "\n  [Enter your choice (1-3)]:"; //Add cin (For user input)
-            //Follow the design for outputs in "display.cpp"
+    char more = 'Y';
+    while (toupper(more) == 'Y') {
+        // reset any previous data
+        dateList.clear();
+        selectedTimes.clear();
+
+        cout << "  ----------------------------------------------------\n";
+        cout << "  ****************************************************\n";
+        cout << "\n  [RSYS: ENTER ROOM DETAILS]\n\n";
+
+        // 1) TYPE OF ROOM
+        cout << "\t==============================\n";
+        cout << "\t|        TYPE OF ROOM        |\n";
+        cout << "\t==============================\n";
+        cout << "\t|  [1] CLASSROOM             |\n";
+        cout << "\t|  [2] ACTIVITY/EVENT ROOM   |\n";
+        cout << "\t|  [3] CANCEL PROCESS        |\n";
+        cout << "\t==============================\n\n";
+        cout << "  [Enter your choice (1-3)]: ";
+        cin >> roomChoice;
+        if (roomChoice == 5) {
+            cout << "\n  [RSYS: Process cancelled! Returning to main menu...]\n\n";
+            return;
+        }
+        roomType = getRoomTypeString(roomChoice);
+
+        // 2) ROOM FLOOR / NAME
+        clearInput();
+        cout << "  [Enter room floor/name]: ";
+        getline(cin, roomName);
+
+        // 3) DATE AVAILABILITY
+        cout << "\n  ----------------------------------------------------\n";
+        cout << "\n  [RSYS: DATE AVAILABILITY]\n";
+        cout << "  [No. of availability?]: ";
+        cin >> numDates;
+        clearInput();
+        for (int i = 0; i < numDates; ++i) {
+            cout << "  [DATE #" << (i+1) << " (MM/DD/YYYY)]: ";
+            string d;
+            getline(cin, d);
+            dateList.push_back(d);
+        }
+
+        // join dates into one string
+        {
+            ostringstream oss;
+            for (int i = 0; i < numDates; ++i) {
+                oss << dateList[i];
+                if (i + 1 < numDates) oss << ", ";
+            }
+            dateAvailability = oss.str();
+        }
+
+        // 4) TIME AVAILABILITY
+        cout << "\n  ----------------------------------------------------\n";
+        cout << "\n  [RSYS: TIME AVAILABILITY]\n";
+        cout << "  [No. of availability? (1-4)]: ";
+        cin >> numTimes;
+
+        cout << "\n\t==============================\n";
+        cout << "\t|       TIME AVAILABLE       |\n";
+        cout << "\t==============================\n";
+        cout << "\t|  [1] 8:00AM-12:00PM        |\n";
+        cout << "\t|  [2] 8:00AM-5:00PM         |\n";
+        cout << "\t|  [3] 12:00PM-5:00PM        |\n";
+        cout << "\t|  [4] 12:00PM-7:00PM        |\n";
+        cout << "\t|  [5] CANCEL PROCESS        |\n";
+        cout << "\t==============================\n\n";
+
+        for (int i = 0; i < numTimes; ++i) {
+            cout << "  [TIME #" << (i+1) << "]: ";
+            cin >> timeChoice;
+            if (timeChoice == 5) {
+                cout << "\n  [RSYS: Process cancelled! Returning to main menu...]\n\n";
+                return;
+            }
+            selectedTimes.push_back(getTimeSlot(timeChoice));
+        }
+
+        // join times into one string
+        {
+            ostringstream oss;
+            for (int i = 0; i < numTimes; ++i) {
+                oss << selectedTimes[i];
+                if (i + 1 < numTimes) oss << ", ";
+            }
+            timeAvailability = oss.str();
+        }
+
+        // 5) DISPLAY SUMMARY & CONFIRM
+        cout << "\n  ====================================================\n";
+        cout << "   ROOM DETAILS -------------------------------------\n";
+        cout << "   Type of Room: " << roomType << "\n";
+        cout << "   Room Floor & Name: " << roomName << "\n";
+        cout << "   Date Availability: \n   " << dateAvailability << "\n";
+        cout << "   Time Availability: \n   " << timeAvailability << "\n";
+        cout << "   --------------------------------------------------\n";
+        cout << "  ====================================================\n\n";
+
+        cout << "  [Confirm room details? (Y/N)]: ";
+        cin >> confirm;
+
+        if (toupper(confirm) == 'Y') {
+            // append to rooms-data-list.txt file in the correct format
+            ofstream ofs("rooms-data-list.txt", ios::app);
+            ofs << roomType << endl;
+            ofs << roomName << endl;
+            ofs << dateAvailability << endl;
+            ofs << timeAvailability << endl;
+            ofs << endl; // Add empty line to separate room entries
+            ofs.close();
+
+            cout << "\n  ====================================================\n";
+            cout << "   ---------------- NEW ROOM ADDED! -----------------\n";
+            cout << "   Type of Room: " << roomType << "\n";
+            cout << "   Room Floor & Name: " << roomName << "\n";
+            cout << "   Date Availability: \n   " << dateAvailability << "\n";
+            cout << "   Time Availability: \n   " << timeAvailability << "\n";
+            cout << "   --------------------------------------------------\n";
+            cout << "  ====================================================\n";
+        } else {
+            cout << "\n  [RSYS: Room not added! Returning to main menu...]\n";
+        }
+
+        cout << "\n  [Enter another room? (Y/N)]: ";
+        cin >> more;
+        cout << "\n";
+    }
 }
+
 
 void RoomReservation::editRoomOrReservation() {
 			cout << "  ----------------------------------------------------" << endl;	
@@ -461,8 +575,8 @@ void RoomReservation::joinWaitlist() {
             cout << "\n   ROOM DETAILS ------------------------------------- ";
             cout << "\n   Type of Room: " << roomType;
             cout << "\n   Room Floor & Name: " << roomToWaitlist;
-            cout << "\n   Date Availability: " << dateAvailability;
-            cout << "\n   Time Availability: " << timeAvailability;
+            cout << "\n   Date Availability: \n   " << dateAvailability;
+            cout << "\n   Time Availability: \n   " << timeAvailability;
             cout << "\n   -------------------------------------------------- ";
             cout << "\n  ====================================================" << endl;
         
@@ -517,8 +631,8 @@ void RoomReservation::joinWaitlist() {
         cout << "\n   ROOM DETAILS ------------------------------------- ";
         cout << "\n   Type of Room: " << roomType;
         cout << "\n   Room Floor & Name: " << roomToWaitlist;
-        cout << "\n   Date Availability: " << dateAvailability;
-        cout << "\n   Time Availability: " << timeAvailability;
+        cout << "\n   Date Availability: \n   " << dateAvailability;
+        cout << "\n   Time Availability: \n   " << timeAvailability;
         cout << "\n   -------------------------------------------------- ";
         cout << "\n  ====================================================" << endl;
         
@@ -678,6 +792,18 @@ void RoomReservation::setRoomName(const string& name) {
 }
 
 // Helper Methods Implementation
+
+// Returns the time slot string based on the user's choice
+string RoomReservation::getTimeSlot(int choice) {
+    switch (choice) {
+        case 1: return "8:00AM-12:00PM";
+        case 2: return "8:00AM-5:00PM";
+        case 3: return "12:00PM-5:00PM";
+        case 4: return "12:00PM-7:00PM";
+        default: return "UNKNOWN";
+    }
+}
+
 void RoomReservation::loadReservationsFromFile() {
     ifstream file("reservations-data-list.txt");
     if (!file.is_open()) {
