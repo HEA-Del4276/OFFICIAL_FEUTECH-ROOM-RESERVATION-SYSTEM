@@ -496,11 +496,138 @@ void RoomReservation::editRoomOrReservation() {
 }
 
 void RoomReservation::deleteRoom() {
-            cout << "  ----------------------------------------------------" << endl;	
-            cout << "  ****************************************************" << endl;	
-            cout << "\n  [RSYS: DELETE ROOM]" << endl;
-            cout << "\n  [Enter COMPLETE room name]: "; //Add cin (For user input)
-            //Follow the design for outputs in "display.cpp"
+    char tryAgain = 'Y';
+    bool firstRun = true;
+    while (toupper(tryAgain) == 'Y') {
+        string roomName;
+        cout << "  ----------------------------------------------------" << endl;
+        cout << "  ****************************************************" << endl;
+        cout << "\n  [RSYS: DELETE ROOM]" << endl;
+        cout << "\n  [Enter COMPLETE room name]: ";
+        if (firstRun) {
+            cin.ignore();
+            firstRun = false;
+        }
+        getline(cin, roomName);
+        cout << "\n";
+
+        ifstream file("rooms-data-list.txt");
+        if (!file) {
+            cerr << "Error accessing room data file.\n";
+            return;
+        }
+
+        // Search for the room and display details if found
+        string line;
+        string roomType, roomNameInFile, dateAvailability, timeAvailability;
+        int lineCount = 0;
+        bool found = false;
+        vector<string> lines;
+        while (getline(file, line)) {
+            lines.push_back(line);
+        }
+        file.close();
+
+        // Search for the room in the lines
+        for (size_t i = 0; i < lines.size(); ) {
+            if (lines[i].empty()) {
+                lineCount = 0;
+                ++i;
+                continue;
+            }
+            switch (lineCount % 4) {
+                case 0: roomType = lines[i]; break;
+                case 1: roomNameInFile = lines[i]; break;
+                case 2: dateAvailability = lines[i]; break;
+                case 3: timeAvailability = lines[i];
+                    if (roomNameInFile == roomName) {
+                        cout << "  [RSYS: Room Found! :D]";
+                        cout << "\n  ====================================================\n";
+                        cout << "   ROOM DETAILS -------------------------------------\n";
+                        cout << "   Type of Room: " << roomType << "\n";
+                        cout << "   Room Floor & Name: " << roomNameInFile << "\n";
+                        cout << "   Date Availability: \n   " << dateAvailability << "\n";
+                        cout << "   Time Availability: \n   " << timeAvailability << "\n";
+                        cout << "   --------------------------------------------------\n";
+                        cout << "  ====================================================\n\n";
+                        found = true;
+                    }
+                    break;
+            }
+            lineCount++;
+            if (found) break;
+            ++i;
+        }
+
+        if (!found) {
+            cout << "  [RSYS: Room Not Found! :C]\n\n";
+            cout << "  [Try another room? (Y/N)]: ";
+            cin >> tryAgain;
+            cin.ignore();
+            if (toupper(tryAgain) != 'Y') {
+                cout << "\n  [Returning to main menu...]" << endl;
+                return;
+            }
+            continue;
+        }
+
+        // Ask for confirmation to delete
+        char confirm;
+        cout << "  [Confirm deletion of this room? (Y/N)]: ";
+        cin >> confirm;
+        cin.ignore();
+        if (toupper(confirm) == 'Y') {
+            // Remove the room block from lines
+            vector<string> newLines;
+            bool deleted = false;
+            for (size_t i = 0; i < lines.size(); ) {
+                if (lines[i].empty()) {
+                    newLines.push_back(lines[i]);
+                    ++i;
+                    continue;
+                }
+                // Room block: [type, name, date, time]
+                if (i + 1 < lines.size() && lines[i+1] == roomName) {
+                    // Skip this block (type, name, date, time, maybe empty line)
+                    deleted = true;
+                    i += 4;
+                    if (i < lines.size() && lines[i].empty()) ++i;
+                } else {
+                    newLines.push_back(lines[i]);
+                    ++i;
+                }
+            }
+            // Overwrite the original file with the updated content
+            ofstream outFile("rooms-data-list.txt");
+            for (const auto& l : newLines) {
+                outFile << l << "\n";
+            }
+            outFile.close();
+            cout << "  [RSYS: Room Deleted Successfully!]\n";
+            cout << "  ====================================================\n";
+            cout << "   ROOM REMOVED ------------------------------------- \n";
+            cout << "   Room Name: " << roomName << "\n";
+            cout << "   -------------------------------------------------- \n";
+            cout << "  ====================================================\n";
+            // Ask if they want to delete another room
+            cout << "\n  [Delete another room? (Y/N)]: ";
+            cin >> tryAgain;
+            cin.ignore();
+            if (toupper(tryAgain) != 'Y') {
+                cout << "\n  [Returning to main menu...]" << endl;
+                return;
+            }
+        } else {
+            cout << "\n  [Room deletion cancelled.]" << endl;
+            cout << "  [Try another room? (Y/N)]: ";
+            cin >> tryAgain;
+            cin.ignore();
+            if (toupper(tryAgain) != 'Y') {
+                cout << "\n  [Returning to main menu...]" << endl;
+                return;
+            }
+        }
+    }
 }
 
 void RoomReservation::cancelReservation() {
