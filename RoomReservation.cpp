@@ -64,15 +64,82 @@ void RoomReservation::displayMenu() {
     cout << "\t==============================" << endl;
 
     cout << "\n  ****************************************************" << endl;			
-	cout << "  ----------------------------------------------------" << endl;	
+    cout << "  ----------------------------------------------------" << endl;	
 }
 
 void RoomReservation::searchRoom() {
-			cout << "  ----------------------------------------------------" << endl;	
-			cout << "  ****************************************************" << endl;			
-			cout << "\n  [RSYS: SEARCH A ROOM]" << endl;
-			cout << "\n  [Enter COMPLETE room name]:"; //Add cin (For user input)
-            //Follow the design for outputs in "display.cpp"
+    string roomName, line;
+    char choice = 'Y';
+    bool found;
+
+    while (toupper(choice) == 'Y') {
+        found = false;
+
+        ifstream file("rooms-data-list.txt");
+        if (!file) {
+            cerr << "Error: Unable to open rooms-data-list.txt file." << endl;
+            return;
+        }
+
+        // Check if file is empty
+        file.seekg(0, ios::end);
+        if (file.tellg() == 0) {
+            cout << "\n  [RSYS: No rooms found. File is empty. Returning to menu.]\n";
+            cout << "  ----------------------------------------------------" << endl;
+            file.close();
+            return;
+        }
+
+        file.seekg(0); // Reset position
+        file.clear();
+
+        cout << "\n  ----------------------------------------------------" << endl;
+        cout << "  ****************************************************" << endl;
+        cout << "\n  [RSYS: SEARCH A ROOM]" << endl;
+        cout << "\n  [Enter COMPLETE room name]: ";
+        cin.ignore();
+        getline(cin, roomName);
+        cout << "\n";
+
+        string roomType, roomNameInFile, dateAvailability, timeAvailability;
+        int lineCount = 0;
+        while (getline(file, line)) {
+            if (line.empty()) {
+                lineCount = 0;
+                continue;
+            }
+            switch (lineCount % 4) {
+                case 0: roomType = line; break;
+                case 1: roomNameInFile = line; break;
+                case 2: dateAvailability = line; break;
+                case 3: timeAvailability = line;
+                    if (roomNameInFile == roomName) {
+                        cout << "  [RSYS: Room Found! :D]";
+                        cout << "\n  ====================================================\n";
+                        cout << "   ROOM DETAILS -------------------------------------\n";
+                        cout << "   Type of Room: " << roomType << "\n";
+                        cout << "   Room Floor & Name: " << roomNameInFile << "\n";
+                        cout << "   Date Availability: \n   " << dateAvailability << "\n";
+                        cout << "   Time Availability: \n   " << timeAvailability << "\n";
+                        cout << "   --------------------------------------------------\n";
+                        cout << "  ====================================================\n\n";
+                        found = true;
+                        break;
+                    }
+                    break;
+            }
+            lineCount++;
+            if (found) break;
+        }
+
+        if (!found) {
+            cout << "  [RSYS: Room Not Found! :C]\n\n";
+        }
+
+        file.close();
+        cout << "  [Enter another room? (Y/N)]: ";
+        cin >> choice;
+    }
 }
 
 void RoomReservation::reserveRoom() {
@@ -299,7 +366,7 @@ void RoomReservation::addRoom() {
         cout << "\t==============================\n\n";
         cout << "  [Enter your choice (1-3)]: ";
         cin >> roomChoice;
-        if (roomChoice == 5) {
+        if (roomChoice == 3) {
             cout << "\n  [RSYS: Process cancelled! Returning to main menu...]\n\n";
             return;
         }
@@ -406,34 +473,33 @@ void RoomReservation::addRoom() {
 
         cout << "\n  [Enter another room? (Y/N)]: ";
         cin >> more;
-        cout << "\n";
     }
 }
 
 
 void RoomReservation::editRoomOrReservation() {
-			cout << "  ----------------------------------------------------" << endl;	
-			cout << "  ****************************************************" << endl;
-			cout << "\n  [RSYS: EDIT ROOM/RESERVATION]" << endl;
-			cout << "\n\t==============================" << endl;
-			cout << "\t|        EDIT OPTIONS        |" << endl;
-			cout << "\t==============================" << endl;
-			cout << "\t|\t\t\t     |" << endl;
-			cout << "\t|  [1] ROOM                  |" << endl;
-			cout << "\t|  [2] RESERVATION           |" << endl;
-			cout << "\t|  [3] CANCEL PROCESS        |" << endl; //After confirming to cancel, Return to Main Menu
-			cout << "\t|\t\t\t     |" << endl;
-			cout << "\t==============================" << endl;
-			
-			cout << "\n  [Enter your choice (1-3)]:" << endl; //Add cin (For user input)
+            cout << "  ----------------------------------------------------" << endl;	
+            cout << "  ****************************************************" << endl;
+            cout << "\n  [RSYS: EDIT ROOM/RESERVATION]" << endl;
+            cout << "\n\t==============================" << endl;
+            cout << "\t|        EDIT OPTIONS        |" << endl;
+            cout << "\t==============================" << endl;
+            cout << "\t|\t\t\t     |" << endl;
+            cout << "\t|  [1] ROOM                  |" << endl;
+            cout << "\t|  [2] RESERVATION           |" << endl;
+            cout << "\t|  [3] CANCEL PROCESS        |" << endl; //After confirming to cancel, Return to Main Menu
+            cout << "\t|\t\t\t     |" << endl;
+            cout << "\t==============================" << endl;
+            
+            cout << "\n  [Enter your choice (1-3)]:" << endl; //Add cin (For user input)
             //Follow the design for outputs in "display.cpp"
 }
 
 void RoomReservation::deleteRoom() {
-			cout << "  ----------------------------------------------------" << endl;	
-			cout << "  ****************************************************" << endl;	
-			cout << "\n  [RSYS: DELETE ROOM]" << endl;
-			cout << "\n  [Enter COMPLETE room name]: "; //Add cin (For user input)
+            cout << "  ----------------------------------------------------" << endl;	
+            cout << "  ****************************************************" << endl;	
+            cout << "\n  [RSYS: DELETE ROOM]" << endl;
+            cout << "\n  [Enter COMPLETE room name]: "; //Add cin (For user input)
             //Follow the design for outputs in "display.cpp"
 }
 
@@ -743,9 +809,9 @@ void RoomReservation::joinWaitlist() {
 }
 
 void RoomReservation::viewAvailableRooms() {
-			cout << "  ----------------------------------------------------" << endl;	
-			cout << "  ****************************************************" << endl;	
-			cout << "\n  [RSYS: VIEW AVAILABLE ROOMS]" << endl;
+            cout << "  ----------------------------------------------------" << endl;	
+            cout << "  ****************************************************" << endl;	
+            cout << "\n  [RSYS: VIEW AVAILABLE ROOMS]" << endl;
             //Follow the design for outputs in "display.cpp"
 }
 
@@ -758,20 +824,20 @@ void RoomReservation::viewMyReservations() {
 }
 
 void RoomReservation::viewAllRoomsAndReservations() {
-			cout << "  ----------------------------------------------------" << endl;	
-			cout << "  ****************************************************" << endl;	
-			cout << "\n  [RSYS: VIEW ALL ROOMS/RESERVATIONS]" << endl;
-			cout << "\n\t==============================" << endl;
-			cout << "\t|        VIEW OPTIONS        |" << endl;
-			cout << "\t==============================" << endl;
-			cout << "\t|\t\t\t     |" << endl;
-			cout << "\t|  [1] ROOM                  |" << endl;
-			cout << "\t|  [2] RESERVATION           |" << endl;
-			cout << "\t|  [3] CANCEL PROCESS        |" << endl; //After confirming to cancel, Return to Main Menu
-			cout << "\t|\t\t\t     |" << endl;
-			cout << "\t==============================" << endl;
-			
-			cout << "\n  [Enter your choice (1-3)]: "; //Add cin (For user input)
+            cout << "  ----------------------------------------------------" << endl;	
+            cout << "  ****************************************************" << endl;	
+            cout << "\n  [RSYS: VIEW ALL ROOMS/RESERVATIONS]" << endl;
+            cout << "\n\t==============================" << endl;
+            cout << "\t|        VIEW OPTIONS        |" << endl;
+            cout << "\t==============================" << endl;
+            cout << "\t|\t\t\t     |" << endl;
+            cout << "\t|  [1] ROOM                  |" << endl;
+            cout << "\t|  [2] RESERVATION           |" << endl;
+            cout << "\t|  [3] CANCEL PROCESS        |" << endl; //After confirming to cancel, Return to Main Menu
+            cout << "\t|\t\t\t     |" << endl;
+            cout << "\t==============================" << endl;
+            
+            cout << "\n  [Enter your choice (1-3)]: "; //Add cin (For user input)
             //Follow the design for outputs in "display.cpp"
 }
 

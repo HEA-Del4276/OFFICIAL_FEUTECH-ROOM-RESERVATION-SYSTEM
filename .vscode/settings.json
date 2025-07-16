@@ -5,6 +5,13 @@
         "vector": "cpp",
         "xstring": "cpp",
         "xmemory": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "utility": "cpp",
+        "xutility": "cpp",
+        "compare": "cpp",
+        "memory": "cpp",
+        "tuple": "cpp",
+        "type_traits": "cpp",
+        "xtr1common": "cpp"
     }
 }
