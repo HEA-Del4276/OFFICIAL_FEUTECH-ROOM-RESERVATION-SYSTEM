@@ -478,21 +478,333 @@ void RoomReservation::addRoom() {
 
 
 void RoomReservation::editRoomOrReservation() {
-            cout << "  ----------------------------------------------------" << endl;	
-            cout << "  ****************************************************" << endl;
-            cout << "\n  [RSYS: EDIT ROOM/RESERVATION]" << endl;
+    while (true) { // Loop the entire edit menu
+        cout << "  ----------------------------------------------------" << endl;
+        cout << "  ****************************************************" << endl;
+        cout << "\n  [RSYS: EDIT ROOM/RESERVATION]" << endl;
+        cout << "\n\t==============================" << endl;
+        cout << "\t|        EDIT OPTIONS        |" << endl;
+        cout << "\t==============================" << endl;
+        cout << "\t|\t\t\t     |" << endl;
+        cout << "\t|  [1] ROOM                  |" << endl;
+        cout << "\t|  [2] RESERVATION           |" << endl;
+        cout << "\t|  [3] CANCEL PROCESS        |" << endl;
+        cout << "\t|\t\t\t     |" << endl;
+        cout << "\t==============================" << endl;
+        int mainChoice;
+        cout << "\n  [Enter your choice (1-3)]: ";
+        cin >> mainChoice;
+        cin.ignore();
+
+
+    if (mainChoice == 1) {
+        // EDIT RESERVATION PROCESS
+        while (true) {
+            cout << "\n  ----------------------------------------------------" << endl;
+            cout << "\n  [RSYS: EDIT ROOM]" << endl;
+            cout << "\n  [Enter COMPLETE room name]: ";
+            string oldRoom;
+            getline(cin, oldRoom);
+
+        ifstream file("rooms-data-list.txt");
+        vector<string> lines;
+        string line;
+        while (getline(file, line)) {
+            lines.push_back(line);
+        }
+        file.close();
+
+        size_t idx = -1;
+        for (size_t i = 1; i < lines.size(); i += 4) {
+            if (lines[i] == oldRoom) {
+                idx = i - 1;
+                break;
+            }
+        }
+
+        if (idx == -1) {
+            cout << "\n  [RSYS: Room not found! :C]" << endl;
+            char tryAgain;
+            cout << "\n  [Try another room? (Y/N)]: ";
+            cin >> tryAgain;
+            cin.ignore();
+            if (toupper(tryAgain) == 'Y') {
+                continue; // Ask for another room name
+            } else {
+                // Instead of break, return to EDIT OPTIONS menu
+                continue; // Go back to the start of the while(true) loop (EDIT OPTIONS)
+            }
+        }
+
+        string newType = lines[idx];
+        string newName = lines[idx + 1];
+        string newDates = lines[idx + 2];
+        string newTimes = lines[idx + 3];
+
+        bool updateAnother = true;
+        while (updateAnother) {
             cout << "\n\t==============================" << endl;
-            cout << "\t|        EDIT OPTIONS        |" << endl;
+            cout << "\t|     EDIT ROOM OPTIONS      |" << endl;
             cout << "\t==============================" << endl;
             cout << "\t|\t\t\t     |" << endl;
-            cout << "\t|  [1] ROOM                  |" << endl;
-            cout << "\t|  [2] RESERVATION           |" << endl;
-            cout << "\t|  [3] CANCEL PROCESS        |" << endl; //After confirming to cancel, Return to Main Menu
+            cout << "\t|  [1] TYPE OF ROOM          |" << endl;
+            cout << "\t|  [2] ROOM FLOOR & NAME     |" << endl;
+            cout << "\t|  [3] DATE AVAILABILITY     |" << endl;
+            cout << "\t|  [4] TIME AVAILABILITY     |" << endl;
+            cout << "\t|  [5] CANCEL PROCESS        |" << endl;
             cout << "\t|\t\t\t     |" << endl;
             cout << "\t==============================" << endl;
-            
-            cout << "\n  [Enter your choice (1-3)]:" << endl; //Add cin (For user input)
-            //Follow the design for outputs in "display.cpp"
+            int editChoice;
+            cout << "\n  [Select action (1-5)]: ";
+            cin >> editChoice;
+            cin.ignore();
+
+            if (editChoice == 1) {
+                cout << "\n  ----------------------------------------------------" << endl;
+                cout << "\n  [RSYS: EDIT ROOM - TYPE OF ROOM]" << endl;
+                cout << "\n\t==============================" << endl;
+                cout << "\t|        TYPE OF ROOM        |" << endl;
+                cout << "\t==============================" << endl;
+                cout << "\t|\t\t\t     |" << endl;
+                cout << "\t|  [1] CLASSROOM             |" << endl;
+                cout << "\t|  [2] ACTIVITY/EVENT ROOM   |" << endl;
+                cout << "\t|  [3] CANCEL PROCESS        |" << endl;
+                cout << "\t|\t\t\t     |" << endl;
+                cout << "\t==============================" << endl;
+                int typeChoice;
+                cout << "\n  [Enter your choice (1-3)]: ";
+                cin >> typeChoice;
+                cin.ignore();
+                if (typeChoice == 1) newType = "CLASSROOM";
+                else if (typeChoice == 2) newType = "ACTIVITY/EVENT ROOM";
+                else if (typeChoice == 3) continue;
+            } else if (editChoice == 2) {
+                cout << "\n  ----------------------------------------------------" << endl;
+                cout << "\n  [RSYS: EDIT ROOM - ROOM FLOOR & NAME]" << endl;
+                cout << "\n  [Enter new complete room name]: ";
+                getline(cin, newName);
+            } else if (editChoice == 3) {
+                cout << "\n  ----------------------------------------------------" << endl;
+                cout << "\n  [RSYS: EDIT A ROOM - DATE AVAILIBILITY]" << endl;
+                cout << "\n  [No. of availability?]: ";
+                int numDates;
+                cin >> numDates;
+                cin.ignore();
+                vector<string> dateList;
+                for (int i = 0; i < numDates; ++i) {
+                    cout << "  [DATE #" << (i+1) << "]: ";
+                    string d;
+                    getline(cin, d);
+                    dateList.push_back(d);
+                }
+                ostringstream oss;
+                for (int i = 0; i < numDates; ++i) {
+                    oss << dateList[i];
+                    if (i + 1 < numDates) oss << ", ";
+                }
+                newDates = oss.str();
+            } else if (editChoice == 4) {
+                cout << "\n  ----------------------------------------------------" << endl;
+                cout << "\n  [RSYS: TIME AVAILIBILITY]" << endl;
+                cout << "\n  [No. of availability? (1-4)]: ";
+                int numTimes;
+                cin >> numTimes;
+                cin.ignore();
+                vector<string> selectedTimes;
+                cout << "\n\t==============================" << endl;
+                cout << "\t|       TIME AVAILABLE       |" << endl;
+                cout << "\t==============================" << endl;
+                cout << "\t|  [1] 8:00AM-12:00PM        |" << endl;
+                cout << "\t|  [2] 8:00AM-5:00PM         |" << endl;
+                cout << "\t|  [3] 12:00PM-5:00PM        |" << endl;
+                cout << "\t|  [4] 12:00PM-7:00PM        |" << endl;
+                cout << "\t|  [5] CANCEL PROCESS        |" << endl;
+                cout << "\t==============================" << endl;
+                for (int i = 0; i < numTimes; ++i) {
+                    cout << "  [TIME #" << (i+1) << "]: ";
+                    int timeChoice;
+                    cin >> timeChoice;
+                    cin.ignore();
+                    if (timeChoice == 5) continue;
+                    selectedTimes.push_back(getTimeSlot(timeChoice));
+                }
+                ostringstream oss;
+                for (int i = 0; i < selectedTimes.size(); ++i) {
+                    oss << selectedTimes[i];
+                    if (i + 1 < selectedTimes.size()) oss << ", ";
+                }
+                newTimes = oss.str();
+            } else if (editChoice == 5) {
+                break;
+            }
+
+            // Show updated details
+            cout << "\n  ====================================================" << endl;
+            cout << "   ------------- ROOM DETAILS UPDATED! -------------- " << endl;
+            cout << "   Type of Room: " << newType << endl;
+            cout << "   Room Floor & Name: " << newName << endl;
+            cout << "   Date Availability:" << endl;
+            cout << "   " << newDates << endl;
+            cout << "   Time Availability:" << endl;
+            cout << "   " << newTimes << endl;
+            cout << "   -------------------------------------------------- " << endl;
+            cout << "  ====================================================" << endl;
+
+            // Confirmation
+            cout << "\n  [RSYS: CONFIRMATION]" << endl;
+            char confirm;
+            cout << "\n  [Confirm updated room details? (Y/N)]: ";
+            cin >> confirm;
+            cin.ignore();
+            if (toupper(confirm) == 'Y') {
+                // Update file
+                ofstream out("rooms-data-list.txt");
+                for (size_t i = 0; i < lines.size(); i++) {
+                    if (i == idx) {
+                        out << newType << endl << newName << endl << newDates << endl << newTimes << endl;
+                        i += 3;
+                    } else {
+                        out << lines[i] << endl;
+                    }
+                }
+                out.close();
+                // Update in-memory values
+                lines[idx] = newType;
+                lines[idx+1] = newName;
+                lines[idx+2] = newDates;
+                lines[idx+3] = newTimes;
+            }
+            char updateMore;
+            cout << "  [Update another detail? (Y/N)]: ";
+            cin >> updateMore;
+            cin.ignore();
+            updateAnother = (toupper(updateMore) == 'Y');
+        }
+        break; // Exit the edit room loop
+        }
+
+    } else if (mainChoice == 2) {
+        // EDIT RESERVATION PROCESS
+        while (true) {
+            cout << "\n  ----------------------------------------------------" << endl;
+            cout << "\n  [RSYS: EDIT RESERVATION]" << endl;
+            cout << "\n  [Enter applicant's name]: ";
+            string applicantName;
+            getline(cin, applicantName);
+
+            // Find reservation by name
+            vector<ReservationNode*> userReservations = findReservationsByName(applicantName);
+            if (userReservations.empty()) {
+                cout << "\n  [RSYS: No reservations found for '" << applicantName << "' :C]" << endl;
+                char tryAgain;
+                cout << "\n  [Try another name? (Y/N)]: ";
+                cin >> tryAgain;
+                cin.ignore();
+                if (toupper(tryAgain) == 'Y') {
+                    continue; // Try another name in the same edit reservation flow
+                } else {
+                    break; // Back to EDIT OPTIONS menu
+                }
+            }
+
+            cout << "\n  [RSYS: Reservation found: " << userReservations.size() << " :D]" << endl;
+            ReservationNode* reservation = userReservations[0]; // Only edit the first found for simplicity
+
+            // Proceed to edit reservation
+            bool updateAnother = true;
+        while (updateAnother) {
+            // Display details
+            displayReservationDetails(*reservation, 1);
+            cout << "\n\t==============================" << endl;
+            cout << "\t|  EDIT RESERVATION OPTIONS  |" << endl;
+            cout << "\t==============================" << endl;
+            cout << "\t|\t\t\t     |" << endl;
+            cout << "\t|  [1] APPLICANT DETAILS     |" << endl;
+            cout << "\t|  [2] ACTIVITY DETAILS      |" << endl;
+            cout << "\t|  [3] ROOM DETAILS          |" << endl;
+            cout << "\t|  [4] CANCEL PROCESS        |" << endl;
+            cout << "\t|\t\t\t     |" << endl;
+            cout << "\t==============================" << endl;
+            int editChoice;
+            cout << "\n  [Select action (1-4)]: ";
+            cin >> editChoice;
+            cin.ignore();
+            if (editChoice == 1) {
+                cout << "\n  ----------------------------------------------------" << endl;
+                cout << "\n  [RSYS: UPDATE APPLICANT DETAILS]" << endl;
+                cout << "\n  [Enter your name]: ";
+                getline(cin, reservation->name);
+                cout << "  [Enter student number]: ";
+                cin >> reservation->studentNum;
+                cin.ignore();
+                cout << "  [Enter program]: ";
+                getline(cin, reservation->program);
+                cout << "  [Enter section]: ";
+                getline(cin, reservation->section);
+            } else if (editChoice == 2) {
+                cout << "\n  ----------------------------------------------------" << endl;
+                cout << "\n  [RSYS: UPDATE ACTIVITY DETAILS]" << endl;
+                cout << "\n  [Enter activity name]: ";
+                getline(cin, reservation->activityName);
+                cout << "  [Date (MM/DD/YYYY)]: ";
+                getline(cin, reservation->activityDate);
+                cout << "  [Start time (0AM/0PM)]: ";
+                getline(cin, reservation->activityStart);
+                cout << "  [End Time (0AM/0PM)]: ";
+                getline(cin, reservation->activityEnd);
+                cout << "  [No. of Participants]: ";
+                cin >> reservation->numparticipants;
+                cin.ignore();
+            } else if (editChoice == 3) {
+                cout << "\n  ----------------------------------------------------" << endl;
+                cout << "\n  [RSYS: UPDATE ROOM DETAILS]" << endl;
+                cout << "\n\t==============================" << endl;
+                cout << "\t|        TYPE OF ROOM        |" << endl;
+                cout << "\t==============================" << endl;
+                cout << "\t|\t\t\t     |" << endl;
+                cout << "\t|  [1] CLASSROOM             |" << endl;
+                cout << "\t|  [2] ACTIVITY/EVENT ROOM   |" << endl;
+                cout << "\t|  [3] CANCEL PROCESS        |" << endl;
+                cout << "\t|\t\t\t     |" << endl;
+                cout << "\t==============================" << endl;
+                int typeChoice;
+                cout << "\n  [Enter your choice (1-3)]: ";
+                cin >> typeChoice;
+                cin.ignore();
+                if (typeChoice == 1) reservation->roomType = "CLASSROOM";
+                else if (typeChoice == 2) reservation->roomType = "ACTIVITY/EVENT ROOM";
+                else if (typeChoice == 3) continue;
+                cout << "  [Room Floor & Name]: ";
+                getline(cin, reservation->roomName);
+            } else if (editChoice == 4) {
+                break;
+            }
+
+            // Show updated details
+            displayReservationDetails(*reservation, 1);
+            cout << "\n  [RSYS: CONFIRMATION]" << endl;
+            char confirm;
+            cout << "\n  [Confirm updated room details? (Y/N)]: ";
+            cin >> confirm;
+            cin.ignore();
+            if (toupper(confirm) == 'Y') {
+                // Update file
+                updateReservationFile();
+            }
+            char updateMore;
+            cout << "  [Update another detail? (Y/N)]: ";
+            cin >> updateMore;
+            cin.ignore();
+            updateAnother = (toupper(updateMore) == 'Y');
+        }
+        break; // Exit the edit reservation loop
+
+        } // end of while (true)
+        } else {
+            cout << "\n  [RSYS: Cancelled. Returning to main menu...]" << endl;
+            break; // Exit the while-loop (back to main menu)
+        }
+    } // end of while (true)
 }
 
 void RoomReservation::deleteRoom() {
