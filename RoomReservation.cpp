@@ -10,35 +10,15 @@ RoomReservation::RoomReservation() {
     numDates = 0;
     numTimes = 0;
     timeChoice = 0;
-    head = nullptr;
-    
-    // Initialize queue pointers
-    front = nullptr;
-    rear = nullptr;
-    
+    // STL containers are default-initialized
     // Load existing reservations from file
     loadReservationsFromFile();
-    
     // Load existing waitlist from file
     loadWaitlistFromFile();
 }
 
 RoomReservation::~RoomReservation() {
-    // Clean up the linked list
-    ReservationNode* current = head;
-    while (current != nullptr) {
-        ReservationNode* next = current->next;
-        delete current;
-        current = next;
-    }
-    
-    // Clean up the waitlist queue
-    WaitlistNode* waitlistCurrent = front;
-    while (waitlistCurrent != nullptr) {
-        WaitlistNode* next = waitlistCurrent->next;
-        delete waitlistCurrent;
-        waitlistCurrent = next;
-    }
+    // No manual cleanup needed for STL containers
 }
 
 void RoomReservation::displayMenu() {
@@ -331,8 +311,8 @@ void RoomReservation::reserveRoom() {
     cin.ignore();
     
     if (confirm == 'Y' || confirm == 'y') {
-        // Add to linked list and save to file
-        addReservationToList(newReservation);
+        // Add to STL vector and save to file
+        reservations.push_back(newReservation);
         saveReservationToFile(newReservation);
         
         cout << "\n  ====================================================";
@@ -498,7 +478,7 @@ void RoomReservation::editRoomOrReservation() {
 
 
     if (mainChoice == 1) {
-        // EDIT RESERVATION PROCESS
+        // EDIT ROOM PROCESS
         while (true) {
             cout << "\n  ----------------------------------------------------" << endl;
             cout << "\n  [RSYS: EDIT ROOM]" << endl;
@@ -506,21 +486,44 @@ void RoomReservation::editRoomOrReservation() {
             string oldRoom;
             getline(cin, oldRoom);
 
-        ifstream file("rooms-data-list.txt");
-        vector<string> lines;
-        string line;
-        while (getline(file, line)) {
-            lines.push_back(line);
-        }
-        file.close();
+            // Helper lambdas for trim and lowercase
+            auto trim = [](const string& s) -> string {
+                size_t start = s.find_first_not_of(" \t\r\n");
+                size_t end = s.find_last_not_of(" \t\r\n");
+                if (start == string::npos || end == string::npos) return "";
+                return s.substr(start, end - start + 1);
+            };
+            auto toLower = [](const string& s) -> string {
+                string out = s;
+                for (char& c : out) c = tolower(static_cast<unsigned char>(c));
+                return out;
+            };
 
-        size_t idx = -1;
-        for (size_t i = 1; i < lines.size(); i += 4) {
-            if (lines[i] == oldRoom) {
-                idx = i - 1;
-                break;
+            string oldRoomTrimmed = toLower(trim(oldRoom));
+
+            ifstream file("rooms-data-list.txt");
+            vector<string> lines;
+            string line;
+            while (getline(file, line)) {
+                lines.push_back(line);
             }
-        }
+            file.close();
+
+            size_t idx = -1;
+            for (size_t i = 0; i + 3 < lines.size(); ) {
+                // Skip empty lines
+                if (trim(lines[i]).empty()) {
+                    ++i;
+                    continue;
+                }
+                // Room block: [type, name, date, time]
+                string fileRoomTrimmed = toLower(trim(lines[i+1]));
+                if (fileRoomTrimmed == oldRoomTrimmed) {
+                    idx = i;
+                    break;
+                }
+                i += 4;
+            }
 
         if (idx == -1) {
             cout << "\n  [RSYS: Room not found! :C]" << endl;
@@ -532,7 +535,7 @@ void RoomReservation::editRoomOrReservation() {
                 continue; // Ask for another room name
             } else {
                 // Instead of break, return to EDIT OPTIONS menu
-                continue; // Go back to the start of the while(true) loop (EDIT OPTIONS)
+                break; // Go back to the start of the while(true) loop (EDIT OPTIONS)
             }
         }
 
@@ -708,7 +711,29 @@ void RoomReservation::editRoomOrReservation() {
             }
 
             cout << "\n  [RSYS: Reservation found: " << userReservations.size() << " :D]" << endl;
-            ReservationNode* reservation = userReservations[0]; // Only edit the first found for simplicity
+            // Display all reservations found
+            cout << "\n  ----------------------------------------------------" << endl;
+            cout << "  [RSYS: Select the reservation you want to edit]" << endl;
+            for (size_t i = 0; i < userReservations.size(); ++i) {
+                displayReservationDetails(*userReservations[i], i + 1);  // Pass index for numbering
+            }
+
+            // Ask user to pick which reservation to edit
+            int selectedIndex;
+            bool validSelection = false;
+            while (!validSelection) {
+                cout << "\n  [Enter reservation number (1-" << userReservations.size() << ")]: ";
+                if (cin >> selectedIndex && selectedIndex >= 1 && selectedIndex <= (int)userReservations.size()) {
+                    validSelection = true;
+                } else {
+                    cout << "  [Invalid input. Try again.]" << endl;
+                    clearInput(); // Clear invalid input
+                }
+            }
+            cin.ignore();
+
+            // Proceed with selected reservation
+            ReservationNode* reservation = userReservations[selectedIndex - 1];
 
             // Proceed to edit reservation
             bool updateAnother = true;
@@ -1009,8 +1034,8 @@ void RoomReservation::cancelReservation() {
                 // Get the reservation to be cancelled
                 ReservationNode reservationToCancel = *userReservations[reservationChoice - 1];
 
-                // Remove from linked list and update file
-                if (removeReservationFromList(reservationChoice - 1, applicantName)) {
+                // Remove from STL vector and update file
+                if (removeReservationByIndex(reservationChoice - 1, applicantName)) {
                     updateReservationFile();
 
                     cout << "\n  ====================================================";
@@ -1185,20 +1210,14 @@ void RoomReservation::joinWaitlist() {
                 cin.ignore();
                 
                 if (viewDetails == 'Y' || viewDetails == 'y') {
-                    // Count total waitlist entries
-                    int totalEntries = 0;
-                    WaitlistNode* current = front;
-                    while (current != nullptr) {
-                        totalEntries++;
-                        current = current->next;
-                    }
-                    
+                    // Use STL queue to count and access entries
+                    std::queue<WaitlistNode> tempQueue = waitlist;
+                    int totalEntries = tempQueue.size();
                     if (totalEntries == 0) {
                         cout << "\n  [No waitlist entries available]" << endl;
                     } else {
                         int entryChoice;
                         bool validChoice = false;
-                        
                         while (!validChoice) {
                             cout << "\n  [Enter waitlist entry number (1-" << totalEntries << ")]: ";
                             if (cin >> entryChoice) {
@@ -1212,16 +1231,16 @@ void RoomReservation::joinWaitlist() {
                             }
                         }
                         cin.ignore();
-                        
-                        // Find and display the selected waitlist entry
-                        current = front;
-                        for (int i = 1; i < entryChoice; i++) {
-                            current = current->next;
+                        // Access the selected entry
+                        WaitlistNode selectedEntry;
+                        for (int i = 1; i <= entryChoice; i++) {
+                            selectedEntry = tempQueue.front();
+                            tempQueue.pop();
                         }
+                        displayWaitlistDetails(selectedEntry, entryChoice);
                         
-                        cout << "\n  ----------------------------------------------------" << endl;	
+                        cout << "\n  ----------------------------------------------------" << endl;    
                         cout << "\n  [RSYS: WAITLIST ENTRY #" << entryChoice << " DETAILS]" << endl;
-                        displayWaitlistDetails(*current, entryChoice);
                         
                         // Show waitlist again after viewing details
                         displayWaitlistQueue();
@@ -1562,7 +1581,7 @@ void RoomReservation::loadReservationsFromFile() {
             case 9: temp.roomType = line; break;
             case 10: 
                 temp.roomName = line;
-                addReservationToList(temp);
+                reservations.push_back(temp);
                 break;
         }
         lineCount++;
@@ -1589,19 +1608,6 @@ void RoomReservation::saveReservationToFile(const ReservationNode& reservation) 
     }
 }
 
-void RoomReservation::addReservationToList(const ReservationNode& reservation) {
-    ReservationNode* newNode = new ReservationNode(reservation);
-    
-    if (head == nullptr) {
-        head = newNode;
-    } else {
-        ReservationNode* current = head;
-        while (current->next != nullptr) {
-            current = current->next;
-        }
-        current->next = newNode;
-    }
-}
 
 void RoomReservation::clearInput() {
     cin.clear();
@@ -1618,15 +1624,11 @@ string RoomReservation::getRoomTypeString(int choice) {
 
 vector<ReservationNode*> RoomReservation::findReservationsByName(const string& name) {
     vector<ReservationNode*> foundReservations;
-    ReservationNode* current = head;
-    
-    while (current != nullptr) {
-        if (current->name == name) {
-            foundReservations.push_back(current);
+    for (auto& r : reservations) {
+        if (r.name == name) {
+            foundReservations.push_back(&r);
         }
-        current = current->next;
     }
-    
     return foundReservations;
 }
 
@@ -1654,34 +1656,17 @@ void RoomReservation::displayReservationDetails(const ReservationNode& reservati
     cout << "\n  ====================================================" << endl;
 }
 
-bool RoomReservation::removeReservationFromList(int index, const string& name) {
+bool RoomReservation::removeReservationByIndex(int index, const string& name) {
+    // Remove by index from reservations vector
     vector<ReservationNode*> userReservations = findReservationsByName(name);
-    
-    if (index < 0 || index >= userReservations.size()) {
-        return false;
-    }
-    
+    if (index < 0 || index >= userReservations.size()) return false;
     ReservationNode* nodeToDelete = userReservations[index];
-    
-    // If it's the head node
-    if (head == nodeToDelete) {
-        head = head->next;
-        delete nodeToDelete;
-        return true;
+    for (auto it = reservations.begin(); it != reservations.end(); ++it) {
+        if (&(*it) == nodeToDelete) {
+            reservations.erase(it);
+            return true;
+        }
     }
-    
-    // Find the previous node
-    ReservationNode* current = head;
-    while (current != nullptr && current->next != nodeToDelete) {
-        current = current->next;
-    }
-    
-    if (current != nullptr) {
-        current->next = nodeToDelete->next;
-        delete nodeToDelete;
-        return true;
-    }
-    
     return false;
 }
 
@@ -1691,21 +1676,19 @@ void RoomReservation::updateReservationFile() {
         return;
     }
     
-    ReservationNode* current = head;
-    while (current != nullptr) {
-        file << current->name << endl;
-        file << current->studentNum << endl;
-        file << current->program << endl;
-        file << current->section << endl;
-        file << current->activityName << endl;
-        file << current->activityDate << endl;
-        file << current->activityStart << endl;
-        file << current->activityEnd << endl;
-        file << current->numparticipants << endl;
-        file << current->roomType << endl;
-        file << current->roomName << endl;
-        file << endl; // Empty line to separate records
-        current = current->next;
+    for (const auto& r : reservations) {
+        file << r.name << endl;
+        file << r.studentNum << endl;
+        file << r.program << endl;
+        file << r.section << endl;
+        file << r.activityName << endl;
+        file << r.activityDate << endl;
+        file << r.activityStart << endl;
+        file << r.activityEnd << endl;
+        file << r.numparticipants << endl;
+        file << r.roomType << endl;
+        file << r.roomName << endl;
+        file << endl;
     }
     
     file.close();
@@ -1766,35 +1749,23 @@ void RoomReservation::saveWaitlistToFile(const WaitlistNode& waitlist) {
 }
 
 void RoomReservation::enqueueWaitlist(const WaitlistNode& waitlist) {
-    WaitlistNode* newNode = new WaitlistNode(waitlist);
-    
-    // If queue is empty
-    if (rear == nullptr) {
-        front = rear = newNode;
-    } else {
-        // Add to rear of queue
-        rear->next = newNode;
-        rear = newNode;
-    }
+    this->waitlist.push(waitlist);
 }
 
 void RoomReservation::displayWaitlistQueue() {
     cout << "\n  ====================================================";
     cout << "\n   CURRENTLY ON WAITLIST ---------------------------- ";
-    
-    WaitlistNode* current = front;
+    std::queue<WaitlistNode> tempQueue = waitlist;
     int position = 1;
-    
-    while (current != nullptr) {
-        cout << "\n   " << position << ". " << current->name << " - " << current->roomName;
-        current = current->next;
+    while (!tempQueue.empty()) {
+        const WaitlistNode& entry = tempQueue.front();
+        cout << "\n   " << position << ". " << entry.name << " - " << entry.roomName;
+        tempQueue.pop();
         position++;
     }
-    
     if (position == 1) {
         cout << "\n   No one is currently on the waitlist.";
     }
-    
     cout << "\n   -------------------------------------------------- ";
     cout << "\n  ====================================================" << endl;
 }
@@ -1823,17 +1794,16 @@ void RoomReservation::displayWaitlistDetails(const WaitlistNode& waitlist, int i
     cout << "\n  ====================================================" << endl;
 }
 
-vector<WaitlistNode*> RoomReservation::findWaitlistByName(const string& name) {
-    vector<WaitlistNode*> foundWaitlists;
-    WaitlistNode* current = front;
-    
-    while (current != nullptr) {
-        if (current->name == name) {
-            foundWaitlists.push_back(current);
+vector<WaitlistNode> RoomReservation::findWaitlistByName(const string& name) {
+    vector<WaitlistNode> foundWaitlists;
+    std::queue<WaitlistNode> tempQueue = waitlist;
+    while (!tempQueue.empty()) {
+        const WaitlistNode& entry = tempQueue.front();
+        if (entry.name == name) {
+            foundWaitlists.push_back(entry);
         }
-        current = current->next;
+        tempQueue.pop();
     }
-    
     return foundWaitlists;
 }
 
@@ -1843,21 +1813,22 @@ void RoomReservation::updateWaitlistFile() {
         return;
     }
     
-    WaitlistNode* current = front;
-    while (current != nullptr) {
-        file << current->name << endl;
-        file << current->studentNum << endl;
-        file << current->program << endl;
-        file << current->section << endl;
-        file << current->activityName << endl;
-        file << current->activityDate << endl;
-        file << current->activityStart << endl;
-        file << current->activityEnd << endl;
-        file << current->numparticipants << endl;
-        file << current->roomType << endl;
-        file << current->roomName << endl;
+    std::queue<WaitlistNode> tempQueue = waitlist;
+    while (!tempQueue.empty()) {
+        const WaitlistNode& entry = tempQueue.front();
+        file << entry.name << endl;
+        file << entry.studentNum << endl;
+        file << entry.program << endl;
+        file << entry.section << endl;
+        file << entry.activityName << endl;
+        file << entry.activityDate << endl;
+        file << entry.activityStart << endl;
+        file << entry.activityEnd << endl;
+        file << entry.numparticipants << endl;
+        file << entry.roomType << endl;
+        file << entry.roomName << endl;
         file << endl; // Empty line to separate records
-        current = current->next;
+        tempQueue.pop();
     }
     
     file.close();
