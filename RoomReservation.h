@@ -45,6 +45,15 @@ struct WaitlistNode {
     WaitlistNode() : next(nullptr) {}
 };
 
+// Define RoomNode struct if not already defined in RoomReservation.h
+struct RoomNode {
+    std::string roomType;
+    std::string roomName;
+    std::string dateAvailability;
+    std::string timeAvailability;
+    RoomNode* next;
+};
+
 class RoomReservation{
     //Attributes
     private:

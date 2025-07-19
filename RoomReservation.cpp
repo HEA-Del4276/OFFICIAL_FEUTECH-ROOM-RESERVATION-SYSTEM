@@ -671,7 +671,7 @@ void RoomReservation::cancelReservation() {
         while (continueWithThisUser) {
             int reservationChoice;
             bool validChoice = false;
-            
+
             while (!validChoice) {
                 cout << "\n  [Which reservation to cancel? (1-" << userReservations.size() << ")]: ";
                 if (cin >> reservationChoice) {
@@ -685,22 +685,22 @@ void RoomReservation::cancelReservation() {
                 }
             }
             cin.ignore();
-            
+
             // Confirmation
             cout << "\n  [RSYS: CONFIRMATION]" << endl;
             char confirm;
             cout << "\n  [Confirm cancellation? (Y/N)]: ";
             cin >> confirm;
             cin.ignore();
-            
+
             if (confirm == 'Y' || confirm == 'y') {
                 // Get the reservation to be cancelled
                 ReservationNode reservationToCancel = *userReservations[reservationChoice - 1];
-                
+
                 // Remove from linked list and update file
                 if (removeReservationFromList(reservationChoice - 1, applicantName)) {
                     updateReservationFile();
-                    
+
                     cout << "\n  ====================================================";
                     cout << "\n   ------ RESERVATION SUCCESSFULLY CANCELLED! -------";
                     cout << "\n   [APPLICANT DETAILS]";
@@ -721,12 +721,12 @@ void RoomReservation::cancelReservation() {
                     cout << "\n   Room Floor & Name: " << reservationToCancel.roomName;
                     cout << "\n   -------------------------------------------------- ";
                     cout << "\n  ====================================================" << endl;
-                    
+
                     char cancelAnother;
                     cout << "\n  [Cancel another reservation? (Y/N)]: ";
                     cin >> cancelAnother;
                     cin.ignore();
-                    
+
                     if (cancelAnother != 'Y' && cancelAnother != 'y') {
                         continueCancellation = false;
                         continueWithThisUser = false;
@@ -740,7 +740,14 @@ void RoomReservation::cancelReservation() {
                 }
             } else {
                 cout << "\n  [Cancellation aborted.]" << endl;
-                // When cancellation is aborted, go back to asking for applicant name
+                // After cancellation is aborted, ask if user wants to try another name
+                char tryAnother;
+                cout << "\n  [Try another name? (Y/N)]: ";
+                cin >> tryAnother;
+                cin.ignore();
+                if (tryAnother != 'Y' && tryAnother != 'y') {
+                    continueCancellation = false;
+                }
                 continueWithThisUser = false;
             }
         }
@@ -936,36 +943,256 @@ void RoomReservation::joinWaitlist() {
 }
 
 void RoomReservation::viewAvailableRooms() {
-            cout << "  ----------------------------------------------------" << endl;	
-            cout << "  ****************************************************" << endl;	
-            cout << "\n  [RSYS: VIEW AVAILABLE ROOMS]" << endl;
-            //Follow the design for outputs in "display.cpp"
+    cout << "  ----------------------------------------------------" << endl;
+    cout << "  ****************************************************" << endl;
+    cout << "\n  [RSYS: VIEW AVAILABLE ROOMS]" << endl;
+
+    ifstream file("rooms-data-list.txt");
+    if (!file.is_open()) {
+        cout << "\n  [ERROR: Unable to open rooms data file.]" << endl;
+        return;
+    }
+
+    string roomType, roomName, dateAvailability, timeAvailability;
+    int count = 0;
+    while (getline(file, roomType)) {
+        getline(file, roomName);
+        getline(file, dateAvailability);
+        getline(file, timeAvailability);
+        // Skip empty separator line if present
+        string separator;
+        getline(file, separator);
+
+        // Only display rooms that are not "TO BE ANNOUNCED" in date or time
+        if (dateAvailability != "TO BE ANNOUNCED" && timeAvailability != "TO BE ANNOUNCED") {
+            count++;
+            cout << "\n  ====================================================" << endl;
+            cout << "   ROOM DETAILS ------------------------------------- " << endl;
+            cout << "   Type of Room: " << roomType << endl;
+            cout << "   Room Floor & Name: " << roomName << endl;
+            cout << "   Date Availability:\n   " << dateAvailability << endl;
+            cout << "   Time Availability:\n   " << timeAvailability << endl;
+            cout << "   -------------------------------------------------- " << endl;
+            cout << "  ====================================================" << endl;
+        }
+    }
+    cout << "\n  [RSYS: Room Found: " << count << "! :D]" << endl;
+    file.close();
 }
 
 void RoomReservation::viewMyReservations() {
+
             cout << "  ----------------------------------------------------" << endl;	
             cout << "  ****************************************************" << endl;	
             cout << "\n  [RSYS: VIEW MY RESERVATIONS]" << endl;
-            cout << "\n  [Enter your name]: "; //Add cin (For user input)
+             //Add cin (For user input)
             //Follow the design for outputs in "display.cpp"
+
+    char tryAgain = 'Y';
+    bool firstRun = true;
+    while (toupper(tryAgain) == 'Y') {
+        string searchName;
+        cout << "\n  [Enter your name]: ";
+        if (firstRun) {
+            cin.ignore();
+            firstRun = false;
+        }
+        getline(cin, searchName);
+
+        // Helper lambda to trim whitespace
+        auto trim = [](string s) -> string {
+            size_t start = s.find_first_not_of(" \t\r\n");
+            size_t end = s.find_last_not_of(" \t\r\n");
+            if (start == string::npos || end == string::npos) return "";
+            return s.substr(start, end - start + 1);
+        };
+        // Helper lambda to lowercase a string
+        auto toLower = [](string s) -> string {
+            for (char& c : s) c = tolower(static_cast<unsigned char>(c));
+            return s;
+        };
+        string searchNameTrimmed = toLower(trim(searchName));
+
+        ifstream file("reservations-data-list.txt");
+        if (!file.is_open()) {
+            cout << "\n  [ERROR: Unable to open reservations file.]" << endl;
+            return;
+        }
+
+        int count = 0;
+        while (true) {
+            string name, studentNum, program, section, activityName, activityDate, startTime, endTime, participants, roomType, roomName;
+            // Skip empty lines before reading a block
+            while (getline(file, name) && trim(name).empty()) {}
+            if (file.eof() || name.empty()) break;
+            getline(file, studentNum);
+            getline(file, program);
+            getline(file, section);
+            getline(file, activityName);
+            getline(file, activityDate);
+            getline(file, startTime);
+            getline(file, endTime);
+            getline(file, participants);
+            getline(file, roomType);
+            getline(file, roomName);
+
+            string nameTrimmed = toLower(trim(name));
+            if (nameTrimmed == searchNameTrimmed) {
+                count++;
+                cout << "\n  [RESERVATION #" << count << "]:" << endl;
+                cout << "  ====================================================" << endl;
+                cout << "   RESERVATION DETAILS ------------------------------" << endl;
+                cout << "   [APPLICANT DETAILS]" << endl;
+                cout << "   Name: " << name << endl;
+                cout << "   Student Number: " << studentNum << endl;
+                cout << "   Program: " << program << endl;
+                cout << "   Section: " << section << endl;
+                cout << "   -------------------------------------------------- " << endl;
+                cout << "   [ACTIVITY DETAILS]" << endl;
+                cout << "   Activity Name: " << activityName << endl;
+                cout << "   Date (MM/DD/YYYY): " << activityDate << endl;
+                cout << "   [Start time (0AM/0PM)]: " << startTime << endl;
+                cout << "   [End Time (0AM/0PM)]: " << endTime << endl;
+                cout << "   [No. of Participants]: " << participants << endl;
+                cout << "   -------------------------------------------------- " << endl;
+                cout << "   [ROOM DETAILS]" << endl;
+                cout << "   Type of Room: " << roomType << endl;
+                cout << "   Room Floor & Name: " << roomName << endl;
+                cout << "   -------------------------------------------------- " << endl;
+                cout << "  ====================================================" << endl;
+            }
+        }
+
+        if (count == 0) {
+            cout << "\n\t==========================================" << endl;
+            cout << "\t|          APPLICANT NOT FOUND!          |" << endl;
+            cout << "\t|  PLEASE ENTER AN EXISTING APPLICANT    |" << endl;
+            cout << "\t==========================================" << endl;
+        }
+
+        file.close();
+        cout << "\n  [View another applicant's reservations? (Y/N)]: ";
+        cin >> tryAgain;
+        cin.ignore();
+    }
 }
 
 void RoomReservation::viewAllRoomsAndReservations() {
-            cout << "  ----------------------------------------------------" << endl;	
-            cout << "  ****************************************************" << endl;	
-            cout << "\n  [RSYS: VIEW ALL ROOMS/RESERVATIONS]" << endl;
-            cout << "\n\t==============================" << endl;
-            cout << "\t|        VIEW OPTIONS        |" << endl;
-            cout << "\t==============================" << endl;
-            cout << "\t|\t\t\t     |" << endl;
-            cout << "\t|  [1] ROOM                  |" << endl;
-            cout << "\t|  [2] RESERVATION           |" << endl;
-            cout << "\t|  [3] CANCEL PROCESS        |" << endl; //After confirming to cancel, Return to Main Menu
-            cout << "\t|\t\t\t     |" << endl;
-            cout << "\t==============================" << endl;
-            
-            cout << "\n  [Enter your choice (1-3)]: "; //Add cin (For user input)
-            //Follow the design for outputs in "display.cpp"
+    bool keepViewing = true;
+    while (keepViewing) {
+        cout << "  ----------------------------------------------------" << endl;
+        cout << "  ****************************************************" << endl;
+        cout << "\n  [RSYS: VIEW ALL ROOMS/RESERVATIONS]" << endl;
+        cout << "\n\t==============================" << endl;
+        cout << "\t|        VIEW OPTIONS        |" << endl;
+        cout << "\t==============================" << endl;
+        cout << "\t|\t\t\t     |" << endl;
+        cout << "\t|  [1] ROOM                  |" << endl;
+        cout << "\t|  [2] RESERVATION           |" << endl;
+        cout << "\t|  [3] CANCEL PROCESS        |" << endl; //After confirming to cancel, Return to Main Menu
+        cout << "\t|\t\t\t     |" << endl;
+        cout << "\t==============================" << endl;
+        cout << "\n  [Enter your choice (1-3)]: ";
+        cin >> choice;
+        cin.ignore();
+
+        if (choice == 1) {
+            // Display all rooms using block-reading logic
+            ifstream file("rooms-data-list.txt");
+            if (!file.is_open()) {
+                cout << "\n  [ERROR: Unable to open rooms file.]" << endl;
+                return;
+            }
+
+            string line;
+            string roomType, roomNameInFile, dateAvailability, timeAvailability;
+            int lineCount = 0;
+            int count = 0;
+            while (getline(file, line)) {
+                if (line.empty()) {
+                    lineCount = 0;
+                    continue;
+                }
+                switch (lineCount % 4) {
+                    case 0: roomType = line; break;
+                    case 1: roomNameInFile = line; break;
+                    case 2: dateAvailability = line; break;
+                    case 3: timeAvailability = line;
+                        count++;
+                        cout << "\n  [ROOM #" << count << "]:" << endl;
+                        cout << "  ====================================================" << endl;
+                        cout << "   ROOM DETAILS ------------------------------------- " << endl;
+                        cout << "   Type of Room: " << roomType << endl;
+                        cout << "   Room Floor & Name: " << roomNameInFile << endl;
+                        cout << "   Date Availability:\n   " << dateAvailability << endl;
+                        cout << "   Time Availability:\n   " << timeAvailability << endl;
+                        cout << "   -------------------------------------------------- " << endl;
+                        cout << "  ====================================================" << endl;
+                        break;
+                }
+                lineCount++;
+            }
+            cout << "\n  [RSYS: Room Found: " << count << "! :D]" << endl;
+            file.close();
+        }
+        else if (choice == 2) {
+            // Display all reservations
+            ifstream file("reservations-data-list.txt");
+            if (!file.is_open()) {
+                cout << "\n  [ERROR: Unable to open reservations file.]" << endl;
+                return;
+            }
+
+            int count = 0;
+            while (true) {
+                string name, studentNum, program, section, activityName, activityDate, startTime, endTime, participants, roomType, roomName;
+                // Skip empty lines before reading a block
+                while (getline(file, name) && name.empty()) {}
+                if (file.eof() || name.empty()) break;
+                getline(file, studentNum);
+                getline(file, program);
+                getline(file, section);
+                getline(file, activityName);
+                getline(file, activityDate);
+                getline(file, startTime);
+                getline(file, endTime);
+                getline(file, participants);
+                getline(file, roomType);
+                getline(file, roomName);
+                count++;
+
+                cout << "\n  [RESERVATION #" << count << "]:" << endl;
+                cout << "  ====================================================" << endl;
+                cout << "   RESERVATION DETAILS ------------------------------" << endl;
+                cout << "   [APPLICANT DETAILS]" << endl;
+                cout << "   Name: " << name << endl;
+                cout << "   Student Number: " << studentNum << endl;
+                cout << "   Program: " << program << endl;
+                cout << "   Section: " << section << endl;
+                cout << "   -------------------------------------------------- " << endl;
+                cout << "   [ACTIVITY DETAILS]" << endl;
+                cout << "   Activity Name: " << activityName << endl;
+                cout << "   Date (MM/DD/YYYY): " << activityDate << endl;
+                cout << "   [Start time (0AM/0PM)]: " << startTime << endl;
+                cout << "   [End Time (0AM/0PM)]: " << endTime << endl;
+                cout << "   [No. of Participants]: " << participants << endl;
+                cout << "   -------------------------------------------------- " << endl;
+                cout << "   [ROOM DETAILS]" << endl;
+                cout << "   Type of Room: " << roomType << endl;
+                cout << "   Room Floor & Name: " << roomName << endl;
+                cout << "   -------------------------------------------------- " << endl;
+                cout << "  ====================================================" << endl;
+            }
+
+            cout << "\n  [RSYS: Reservation Found: " << count << "! :D]" << endl;
+            file.close();
+        }
+        else {
+            cout << "\n  [Returning to Main Menu...]" << endl;
+            keepViewing = false;
+        }
+    }
+
 }
 
 string RoomReservation::getRoomType() const {
