@@ -172,7 +172,7 @@ void RoomReservation::reserveRoom() {
         string nameInput;
         getline(cin, nameInput);
         bool valid = true;
-        if (nameInput.length() <= 2 || nameInput.length() >= 25) valid = false;
+        if (nameInput.length() <= 3 || nameInput.length() >= 30) valid = false;
         for (char c : nameInput) {
             if (!(isalpha(c) || c == ' ' || c == '.')) { valid = false; break; }
         }
@@ -268,6 +268,7 @@ void RoomReservation::reserveRoom() {
             cout << "\t==========================================" << endl;
             continue;
         }
+        for (char& c : actInput) c = toupper(c);
         newReservation.activityName = actInput;
         break;
     }
@@ -307,9 +308,12 @@ void RoomReservation::reserveRoom() {
     }
 
     // Start time: uppercase, format 0AM/0PM or 0:00AM/PM, only ':' allowed
-    auto isValidTime = [](const string& t) -> bool {
-        string s = t;
+    auto toUpper = [](string s) -> string {
         for (char& c : s) c = toupper(c);
+        return s;
+    };
+    auto isValidTime = [toUpper](const string& t) -> bool {
+        string s = toUpper(t);
         if (s.length() < 3 || s.length() > 7) return false;
         size_t pm = s.find("PM"), am = s.find("AM");
         if (pm == string::npos && am == string::npos) return false;
@@ -317,15 +321,14 @@ void RoomReservation::reserveRoom() {
         for (char c : timePart) {
             if (!isdigit(c) && c != ':') return false;
         }
-        // No extra chars
-        if (pm != s.length()-2 && am != s.length()-2) return false;
+        if ((pm != s.length()-2 && am != s.length()-2)) return false;
         return true;
     };
     while (true) {
         cout << "  [Start time (0AM/0PM)]: ";
         string stInput;
         getline(cin, stInput);
-        for (char& c : stInput) c = toupper(c);
+        stInput = toUpper(stInput);
         if (!isValidTime(stInput)) {
             cout << "\n\t==========================================" << endl;
             cout << "\t|              INVALID INPUT!            |" << endl;
@@ -340,7 +343,7 @@ void RoomReservation::reserveRoom() {
         cout << "  [End Time (0AM/0PM)]: ";
         string etInput;
         getline(cin, etInput);
-        for (char& c : etInput) c = toupper(c);
+        etInput = toUpper(etInput);
         if (!isValidTime(etInput)) {
             cout << "\n\t==========================================" << endl;
             cout << "\t|              INVALID INPUT!            |" << endl;
@@ -431,12 +434,21 @@ void RoomReservation::reserveRoom() {
                 cout << "  [The selected room either doesn't exist, is not available,]" << endl;
                 cout << "  [doesn't match your activity date/time requirements.]" << endl;
                 
-                char tryAgain;
-                cout << "\n  [Try another room? (Y/N)]: ";
-                cin >> tryAgain;
-                cin.ignore();
-                
-                if (tryAgain != 'Y' && tryAgain != 'y') {
+                string tryAgainInput;
+                bool validTryAgain = false;
+                do {
+                    cout << "\n  [Try another room? (Y/N)]: ";
+                    getline(cin, tryAgainInput);
+                    if (tryAgainInput.length() == 1 && (tryAgainInput[0] == 'Y' || tryAgainInput[0] == 'y' || tryAgainInput[0] == 'N' || tryAgainInput[0] == 'n')) {
+                        validTryAgain = true;
+                    } else {
+                        cout << "\n\t==========================================" << endl;
+                        cout << "\t|              INVALID INPUT!            |" << endl;
+                        cout << "\t|      Type only Y/y or N/n.             |" << endl;
+                        cout << "\t==========================================\n" << endl;
+                    }
+                } while (!validTryAgain);
+                if (tryAgainInput[0] != 'Y' && tryAgainInput[0] != 'y') {
                     cout << "\n  [Room selection cancelled. Returning to main menu]" << endl;
                     return;
                 }
@@ -1369,12 +1381,12 @@ void RoomReservation::editRoomOrReservation() {
                         string nameInput;
                         getline(cin, nameInput);
                         bool valid = true;
-                        if (nameInput.length() <= 2 || nameInput.length() >= 25) valid = false;
+                        if (nameInput.length() <= 3 || nameInput.length() >= 30) valid = false;
                         for (char c : nameInput) {
                             if (!(isalpha(c) || c == ' ' || c == '.')) { valid = false; break; }
                         }
                         if (!valid) {
-                            cout << "\n  [INVALID NAME: Must be 3-24 letters, no numbers or symbols (except '.')]\n";
+                            cout << "\n  [INVALID NAME: Must be 3-30 letters, no numbers or symbols (except '.')]\n";
                             continue;
                         }
                         for (char& c : nameInput) c = toupper(c);
@@ -1447,6 +1459,7 @@ void RoomReservation::editRoomOrReservation() {
                                 cout << "\n  [INVALID: Must be 10-25 characters]\n";
                                 continue;
                             }
+                            for (char& c : actInput) c = toupper(c);
                             reservation->activityName = actInput;
                             break;
                         }
@@ -1481,6 +1494,10 @@ void RoomReservation::editRoomOrReservation() {
                         }
 
                         // TIME FORMAT CHECK
+                        auto toUpper = [](string s) -> string {
+                            for (char& c : s) c = toupper(c);
+                            return s;
+                        };
                         auto isValidTime = [](string t) {
                             for (char& c : t) c = toupper(c);
                             if (t.length() < 3 || t.length() > 7) return false;
@@ -1498,7 +1515,7 @@ void RoomReservation::editRoomOrReservation() {
                             cout << "  [Start time (0AM/0PM)]: ";
                             string st;
                             getline(cin, st);
-                            for (char& c : st) c = toupper(c);
+                            st = toUpper(st);
                             if (!isValidTime(st)) {
                                 cout << "\n  [INVALID TIME: Format must be 0AM/PM or 0:00AM/PM, no symbols except ':']\n";
                                 continue;
@@ -1512,7 +1529,7 @@ void RoomReservation::editRoomOrReservation() {
                             cout << "  [End time (0AM/0PM)]: ";
                             string et;
                             getline(cin, et);
-                            for (char& c : et) c = toupper(c);
+                            et = toUpper(et);
                             if (!isValidTime(et)) {
                                 cout << "\n  [INVALID TIME: Format must be 0AM/PM or 0:00AM/PM, no symbols except ':']\n";
                                 continue;
@@ -1980,18 +1997,96 @@ void RoomReservation::cancelReservation() {
 }
 
 void RoomReservation::joinWaitlist() {
-    cout << "  ----------------------------------------------------" << endl;	
+    cout << "  ----------------------------------------------------" << endl;    
     cout << "  ****************************************************" << endl;
     cout << "\n  [RSYS: JOIN WAITLIST]" << endl;
-    
-    cin.ignore(); // Clear input buffer once at the beginning
-    
-    bool continueWaitlist = true;
-    while (continueWaitlist) {
+
+    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear input buffer once at the beginning
+
+    auto isValidRoomName = [](const string& name) -> bool {
+        if (name.length() < 4 || name.length() > 25) return false;
+        for (char c : name) {
+            if (!isalnum(c) && c != ' ' && c != '-') return false;
+        }
+        return true;
+    };
+    auto isValidYN = [](const string& s) -> bool {
+        return s.length() == 1 && (s[0] == 'Y' || s[0] == 'y' || s[0] == 'N' || s[0] == 'n');
+    };
+    auto toUpper = [](string s) -> string {
+        for (char& c : s) c = toupper(c);
+        return s;
+    };
+    auto isValidName = [](const string& name) -> bool {
+        if (name.length() < 3 || name.length() > 25) return false;
+        for (char c : name) {
+            if (!isalpha(c) && c != ' ' && c != '.') return false;
+        }
+        return true;
+    };
+    auto isValidStudentNum = [](const string& s) -> bool {
+        return s.length() == 9 && s.find_first_not_of("0123456789") == std::string::npos;
+    };
+    auto isValidProgram = [](const string& s) -> bool {
+        if (s.length() < 6 || s.length() > 10) return false;
+        for (char c : s) {
+            if (!isalpha(c)) return false;
+        }
+        return true;
+    };
+    auto isValidSection = [](const string& s) -> bool {
+        if (s.length() < 4 || s.length() > 5) return false;
+        for (char c : s) {
+            if (!isalnum(c)) return false;
+        }
+        return true;
+    };
+    auto isValidActivityName = [](const string& s) -> bool {
+        return s.length() >= 10 && s.length() <= 25;
+    };
+    auto isValidDate = [](const string& s) -> bool {
+        if (s.length() != 10 || s[2] != '/' || s[5] != '/') return false;
+        string mm = s.substr(0,2), dd = s.substr(3,2), yyyy = s.substr(6,4);
+        if (mm.find_first_not_of("0123456789") != string::npos || dd.find_first_not_of("0123456789") != string::npos || yyyy.find_first_not_of("0123456789") != string::npos) return false;
+        int month = stoi(mm), day = stoi(dd), year = stoi(yyyy);
+        if (month < 1 || month > 12 || day < 1 || day > 31) return false;
+        if (year < 2025 || (year == 2025 && (month < 7 || (month == 7 && day < 20)))) return false;
+        return true;
+    };
+    auto isValidTime = [toUpper](const string& t) -> bool {
+        string s = toUpper(t);
+        if (s.length() < 3 || s.length() > 7) return false;
+        size_t pm = s.find("PM"), am = s.find("AM");
+        if (pm == string::npos && am == string::npos) return false;
+        string timePart = s.substr(0, s.length()-2);
+        for (char c : timePart) {
+            if (!isdigit(c) && c != ':') return false;
+        }
+        if ((pm != s.length()-2 && am != s.length()-2)) return false;
+        return true;
+    };
+    auto isValidParticipants = [](const string& s) -> bool {
+        return s.find_first_not_of("0123456789") == string::npos && !s.empty() && stoi(s) > 1;
+    };
+    auto isValidEntryChoice = [](const string& s, int max) -> bool {
+        return !s.empty() && s.find_first_not_of("0123456789") == std::string::npos && stoi(s) >= 1 && stoi(s) <= max;
+    };
+
+    string moreInput = "Y";
+    while (isValidYN(moreInput) && (moreInput[0] == 'Y' || moreInput[0] == 'y')) {
         string roomToWaitlist;
-        cout << "\n  [Enter room floor & name to waitlist]: ";
-        getline(cin, roomToWaitlist);
-        
+        do {
+            cout << "\n  [Enter room floor & name to waitlist]: ";
+            getline(cin, roomToWaitlist);
+            if (!isValidRoomName(roomToWaitlist)) {
+                cout << "\n\t==========================================" << endl;
+                cout << "\t|              INVALID INPUT!            |" << endl;
+                cout << "\t| Room name must be 4-25 characters,     |" << endl;
+                cout << "\t| only letters, numbers, spaces, or '-'. |" << endl;
+                cout << "\t==========================================\n" << endl;
+            }
+        } while (!isValidRoomName(roomToWaitlist));
+
         // Check if room exists in the file
         string roomType, dateAvailability, timeAvailability;
         if (findRoomInFile(roomToWaitlist, roomType, dateAvailability, timeAvailability)) {
@@ -2004,160 +2099,267 @@ void RoomReservation::joinWaitlist() {
             cout << "\n   Time Availability: \n   " << timeAvailability;
             cout << "\n   -------------------------------------------------- ";
             cout << "\n  ====================================================" << endl;
-        
+
             WaitlistNode newWaitlist;
-        
-        // Input Applicant Details
-        cout << "\n  [RSYS: RESERVATION DETAILS]" << endl;
-        cout << "\n  [Enter your name]: ";
-        getline(cin, newWaitlist.name);
-        
-        cout << "  [Enter student number]: ";
-        while (!(cin >> newWaitlist.studentNum)) {
-            cout << "  [Invalid input. Enter student number]: ";
-            clearInput();
-        }
-        cin.ignore();
-        
-        cout << "  [Enter program]: ";
-        getline(cin, newWaitlist.program);
-        
-        cout << "  [Enter section]: ";
-        getline(cin, newWaitlist.section);
-        
-        cout << "\n  ----------------------------------------------------" << endl;	
-        
-        // Input Activity Details
-        cout << "\n  [RSYS: ACTIVITY DETAILS]" << endl;
-        cout << "\n  [Enter activity name]: ";
-        getline(cin, newWaitlist.activityName);
-        
-        cout << "  [Date (MM/DD/YYYY)]: ";
-        getline(cin, newWaitlist.activityDate);
-        
-        cout << "  [Start time (0AM/0PM)]: ";
-        getline(cin, newWaitlist.activityStart);
-        
-        cout << "  [End Time (0AM/0PM)]: ";
-        getline(cin, newWaitlist.activityEnd);
-        
-        cout << "  [No. of Participants]: ";
-        while (!(cin >> newWaitlist.numparticipants)) {
-            cout << "  [Invalid input. Enter number of participants]: ";
-            clearInput();
-        }
-        cin.ignore();
-        
-        cout << "\n  ----------------------------------------------------" << endl;	
-        
-        // Display Room Details (already entered room)
-        cout << "\n  [RSYS: ROOM DETAILS]" << endl;
-        cout << "\n  ====================================================";
-        cout << "\n   ROOM DETAILS ------------------------------------- ";
-        cout << "\n   Type of Room: " << roomType;
-        cout << "\n   Room Floor & Name: " << roomToWaitlist;
-        cout << "\n   Date Availability: \n   " << dateAvailability;
-        cout << "\n   Time Availability: \n   " << timeAvailability;
-        cout << "\n   -------------------------------------------------- ";
-        cout << "\n  ====================================================" << endl;
-        
-        // Set room details for the waitlist entry
-        newWaitlist.roomType = roomType;
-        newWaitlist.roomName = roomToWaitlist;
-        
-        cout << "\n  ----------------------------------------------------" << endl;
-        
-        // Confirmation
-        cout << "\n  [RSYS: CONFIRMATION]" << endl;
-        char joinConfirm;
-        cout << "\n  [Join waitlist? (Y/N)]: ";
-        cin >> joinConfirm;
-        cin.ignore();
-        
-        if (joinConfirm == 'Y' || joinConfirm == 'y') {
-            // Add to queue and save to file
-            enqueueWaitlist(newWaitlist);
-            saveWaitlistToFile(newWaitlist);
-            
+
+            // Input Applicant Details
+            cout << "\n  [RSYS: RESERVATION DETAILS]" << endl;
+            string nameInput;
+            do {
+                cout << "\n  [Enter your name]: ";
+                getline(cin, nameInput);
+                if (!isValidName(nameInput)) {
+                    cout << "\n\t==========================================" << endl;
+                    cout << "\t|              INVALID INPUT!            |" << endl;
+                    cout << "\t| Name must be 3-30 letters, no numbers, |" << endl;
+                    cout << "\t| only '.' allowed as special char.      |" << endl;
+                    cout << "\t==========================================\n" << endl;
+                }
+            } while (!isValidName(nameInput));
+            newWaitlist.name = toUpper(nameInput);
+
+            string studentNumInput;
+            do {
+                cout << "  [Enter student number]: ";
+                getline(cin, studentNumInput);
+                if (!isValidStudentNum(studentNumInput)) {
+                    cout << "\n\t==========================================" << endl;
+                    cout << "\t|              INVALID INPUT!            |" << endl;
+                    cout << "\t| Student number must be exactly 9 digits|" << endl;
+                    cout << "\t| and only numbers.                      |" << endl;
+                    cout << "\t==========================================\n" << endl;
+                }
+            } while (!isValidStudentNum(studentNumInput));
+            newWaitlist.studentNum = stoi(studentNumInput);
+
+            string programInput;
+            do {
+                cout << "  [Enter program]: ";
+                getline(cin, programInput);
+                if (!isValidProgram(programInput)) {
+                    cout << "\n\t==========================================" << endl;
+                    cout << "\t|              INVALID INPUT!            |" << endl;
+                    cout << "\t| Program must be 6-10 letters, no nums, |" << endl;
+                    cout << "\t| no special chars.                      |" << endl;
+                    cout << "\t==========================================\n" << endl;
+                }
+            } while (!isValidProgram(programInput));
+            newWaitlist.program = toUpper(programInput);
+
+            string sectionInput;
+            do {
+                cout << "  [Enter section]: ";
+                getline(cin, sectionInput);
+                if (!isValidSection(sectionInput)) {
+                    cout << "\n\t==========================================" << endl;
+                    cout << "\t|              INVALID INPUT!            |" << endl;
+                    cout << "\t| Section must be 4-5 alphanumeric chars.|" << endl;
+                    cout << "\t| No special chars.                      |" << endl;
+                    cout << "\t==========================================\n" << endl;
+                }
+            } while (!isValidSection(sectionInput));
+            newWaitlist.section = toUpper(sectionInput);
+
+            cout << "\n  ----------------------------------------------------" << endl;    
+
+            // Input Activity Details
+            cout << "\n  [RSYS: ACTIVITY DETAILS]" << endl;
+            string activityInput;
+            do {
+                cout << "\n  [Enter activity name]: ";
+                getline(cin, activityInput);
+                if (!isValidActivityName(activityInput)) {
+                    cout << "\n\t==========================================" << endl;
+                    cout << "\t|              INVALID INPUT!            |" << endl;
+                    cout << "\t| Activity name must be 10-25 chars.     |" << endl;
+                    cout << "\t==========================================\n" << endl;
+                }
+            } while (!isValidActivityName(activityInput));
+            for (char& c : activityInput) c = toupper(c);
+            newWaitlist.activityName = activityInput;
+
+            string dateInput;
+            do {
+                cout << "  [Date (MM/DD/YYYY)]: ";
+                getline(cin, dateInput);
+                if (!isValidDate(dateInput)) {
+                    cout << "\n\t==========================================" << endl;
+                    cout << "\t|              INVALID INPUT!            |" << endl;
+                    cout << "\t| Date must be MM/DD/YYYY, numbers only, |" << endl;
+                    cout << "\t| on/after July 20, 2025, day 1-31.      |" << endl;
+                    cout << "\t==========================================\n" << endl;
+                }
+            } while (!isValidDate(dateInput));
+            newWaitlist.activityDate = dateInput;
+
+            string startTimeInput;
+            do {
+                cout << "  [Start time (0AM/0PM)]: ";
+                getline(cin, startTimeInput);
+                startTimeInput = toUpper(startTimeInput);
+                if (!isValidTime(startTimeInput)) {
+                    cout << "\n\t==========================================" << endl;
+                    cout << "\t|              INVALID INPUT!            |" << endl;
+                    cout << "\t| Time must be in format 0AM/0PM,        |" << endl;
+                    cout << "\t| only ':' allowed, no extras.           |" << endl;
+                    cout << "\t==========================================\n" << endl;
+                }
+            } while (!isValidTime(startTimeInput));
+            newWaitlist.activityStart = startTimeInput;
+
+            string endTimeInput;
+            do {
+                cout << "  [End Time (0AM/0PM)]: ";
+                getline(cin, endTimeInput);
+                endTimeInput = toUpper(endTimeInput);
+                if (!isValidTime(endTimeInput)) {
+                    cout << "\n\t==========================================" << endl;
+                    cout << "\t|              INVALID INPUT!            |" << endl;
+                    cout << "\t| Time must be in format 0AM/0PM,        |" << endl;
+                    cout << "\t| only ':' allowed, no extras.           |" << endl;
+                    cout << "\t==========================================\n" << endl;
+                }
+            } while (!isValidTime(endTimeInput));
+            newWaitlist.activityEnd = endTimeInput;
+
+            string participantsInput;
+            do {
+                cout << "  [No. of Participants]: ";
+                getline(cin, participantsInput);
+                if (!isValidParticipants(participantsInput)) {
+                    cout << "\n\t==========================================" << endl;
+                    cout << "\t|              INVALID INPUT!            |" << endl;
+                    cout << "\t| Must be a number > 1, no extras.       |" << endl;
+                    cout << "\t==========================================\n" << endl;
+                }
+            } while (!isValidParticipants(participantsInput));
+            newWaitlist.numparticipants = stoi(participantsInput);
+
+            cout << "\n  ----------------------------------------------------" << endl;    
+
+            // Display Room Details (already entered room)
+            cout << "\n  [RSYS: ROOM DETAILS]" << endl;
             cout << "\n  ====================================================";
-            cout << "\n   ----------- ADDED TO WAITLIST! ------------------- ";
-            cout << "\n   Your waitlist request has been successfully added!";
-            cout << "\n   Waitlist ID: WAIT" << newWaitlist.studentNum;
+            cout << "\n   ROOM DETAILS ------------------------------------- ";
+            cout << "\n   Type of Room: " << roomType;
+            cout << "\n   Room Floor & Name: " << roomToWaitlist;
+            cout << "\n   Date Availability: \n   " << dateAvailability;
+            cout << "\n   Time Availability: \n   " << timeAvailability;
             cout << "\n   -------------------------------------------------- ";
             cout << "\n  ====================================================" << endl;
-            
-            // Display current waitlist
-            displayWaitlistQueue();
-            
-            // Loop to view waitlist details by selecting entry number
-            bool viewingDetails = true;
-            while (viewingDetails) {
-                char viewDetails;
-                cout << "\n  [View waitlist applicant details? (Y/N)]: ";
-                cin >> viewDetails;
-                cin.ignore();
-                
-                if (viewDetails == 'Y' || viewDetails == 'y') {
-                    // Use STL queue to count and access entries
-                    std::queue<WaitlistNode> tempQueue = waitlist;
-                    int totalEntries = tempQueue.size();
-                    if (totalEntries == 0) {
-                        cout << "\n  [No waitlist entries available]" << endl;
-                    } else {
-                        int entryChoice;
-                        bool validChoice = false;
-                        while (!validChoice) {
-                            cout << "\n  [Enter waitlist entry number (1-" << totalEntries << ")]: ";
-                            if (cin >> entryChoice) {
-                                if (entryChoice >= 1 && entryChoice <= totalEntries) {
-                                    validChoice = true;
-                                }
-                            }
-                            if (!validChoice) {
-                                cout << "  [Invalid choice. Please enter a number between 1-" << totalEntries << "]" << endl;
-                                clearInput();
-                            }
-                        }
-                        cin.ignore();
-                        // Access the selected entry
-                        WaitlistNode selectedEntry;
-                        for (int i = 1; i <= entryChoice; i++) {
-                            selectedEntry = tempQueue.front();
-                            tempQueue.pop();
-                        }
-                        displayWaitlistDetails(selectedEntry, entryChoice);
-                        
-                        cout << "\n  ----------------------------------------------------" << endl;    
-                        cout << "\n  [RSYS: WAITLIST ENTRY #" << entryChoice << " DETAILS]" << endl;
-                        
-                        // Show waitlist again after viewing details
-                        displayWaitlistQueue();
-                    }
-                } else {
-                    // When user says N to viewing details, exit the viewing loop
-                    viewingDetails = false;
+
+            // Set room details for the waitlist entry
+            newWaitlist.roomType = roomType;
+            newWaitlist.roomName = roomToWaitlist;
+
+            cout << "\n  ----------------------------------------------------" << endl;
+
+            // Confirmation
+            cout << "\n  [RSYS: CONFIRMATION]" << endl;
+            string joinConfirmInput;
+            do {
+                cout << "\n  [Join waitlist? (Y/N)]: ";
+                getline(cin, joinConfirmInput);
+                if (!isValidYN(joinConfirmInput)) {
+                    cout << "\n\t==========================================" << endl;
+                    cout << "\t|              INVALID INPUT!            |" << endl;
+                    cout << "\t|      Type only Y/y or N/n.             |" << endl;
+                    cout << "\t==========================================\n" << endl;
                 }
+            } while (!isValidYN(joinConfirmInput));
+
+            if (joinConfirmInput[0] == 'Y' || joinConfirmInput[0] == 'y') {
+                // Add to queue and save to file
+                enqueueWaitlist(newWaitlist);
+                saveWaitlistToFile(newWaitlist);
+
+                cout << "\n  ====================================================";
+                cout << "\n   ----------- ADDED TO WAITLIST! ------------------- ";
+                cout << "\n   Your waitlist request has been successfully added!";
+                cout << "\n   Waitlist ID: WAIT" << newWaitlist.studentNum;
+                cout << "\n   -------------------------------------------------- ";
+                cout << "\n  ====================================================" << endl;
+
+                // Display current waitlist
+                displayWaitlistQueue();
+
+                // Loop to view waitlist details by selecting entry number
+                bool viewingDetails = true;
+                string viewDetailsInput;
+                while (viewingDetails) {
+                    do {
+                        cout << "\n  [View waitlist applicant details? (Y/N)]: ";
+                        getline(cin, viewDetailsInput);
+                        if (!isValidYN(viewDetailsInput)) {
+                            cout << "\n\t==========================================" << endl;
+                            cout << "\t|              INVALID INPUT!            |" << endl;
+                            cout << "\t|      Type only Y/y or N/n.             |" << endl;
+                            cout << "\t==========================================\n" << endl;
+                        }
+                    } while (!isValidYN(viewDetailsInput));
+                    if (viewDetailsInput[0] == 'Y' || viewDetailsInput[0] == 'y') {
+                        std::queue<WaitlistNode> tempQueue = waitlist;
+                        int totalEntries = tempQueue.size();
+                        if (totalEntries == 0) {
+                            cout << "\n  [No waitlist entries available]" << endl;
+                        } else {
+                            string entryChoiceInput;
+                            int entryChoice = 0;
+                            bool validChoice = false;
+                            do {
+                                cout << "\n  [Enter waitlist entry number (1-" << totalEntries << ")]: ";
+                                getline(cin, entryChoiceInput);
+                                if (isValidEntryChoice(entryChoiceInput, totalEntries)) {
+                                    entryChoice = stoi(entryChoiceInput);
+                                    validChoice = true;
+                                } else {
+                                    cout << "\n\t==========================================" << endl;
+                                    cout << "\t|              INVALID INPUT!            |" << endl;
+                                    cout << "\t| Enter a valid number between 1-" << totalEntries << ". |" << endl;
+                                    cout << "\t| Only numbers, no letters/special chars.|" << endl;
+                                    cout << "\t==========================================\n" << endl;
+                                }
+                            } while (!validChoice);
+                            // Access the selected entry
+                            WaitlistNode selectedEntry;
+                            for (int i = 1; i <= entryChoice; i++) {
+                                selectedEntry = tempQueue.front();
+                                tempQueue.pop();
+                            }
+                            displayWaitlistDetails(selectedEntry, entryChoice);
+
+                            cout << "\n  ----------------------------------------------------" << endl;    
+                            cout << "\n  [RSYS: WAITLIST ENTRY #" << entryChoice << " DETAILS]" << endl;
+
+                            // Show waitlist again after viewing details
+                            displayWaitlistQueue();
+                        }
+                    } else {
+                        viewingDetails = false;
+                    }
+                }
+            } else {
+                cout << "\n  [Waitlist request cancelled.]" << endl;
             }
-        } else {
-            cout << "\n  [Waitlist request cancelled.]" << endl;
-        }
-        
+
         } else {
             // Room not found
             cout << "\n  [RSYS: Room Not Found! :C]";
             cout << "\n  [The room '" << roomToWaitlist << "' does not exist in the system.]";
             cout << "\n  [Please check the room name and try again.]" << endl;
         }
-        
-        // Continue options
-        char addAnother;
-        cout << "\n  [Add another waitlist request? (Y/N)]: ";
-        cin >> addAnother;
-        cin.ignore();
-        
-        if (addAnother != 'Y' && addAnother != 'y') {
-            continueWaitlist = false;
-        }
+
+        // Repeat prompt for another waitlist request
+        do {
+            cout << "\n  [Add another waitlist request? (Y/N)]: ";
+            getline(cin, moreInput);
+            if (!isValidYN(moreInput)) {
+                cout << "\n\t==========================================" << endl;
+                cout << "\t|              INVALID INPUT!            |" << endl;
+                cout << "\t|      Type only Y/y or N/n.             |" << endl;
+                cout << "\t==========================================\n" << endl;
+            }
+        } while (!isValidYN(moreInput));
     }
 }
 
@@ -2207,20 +2409,32 @@ void RoomReservation::viewMyReservations() {
              //Add cin (For user input)
             //Follow the design for outputs in "display.cpp"
 
-    char tryAgain = 'Y';
+    string tryAgainInput = "Y";
     bool firstRun = true;
-    while (toupper(tryAgain) == 'Y') {
-        int studentNumInput;
-        cout << "\n  [Enter your student number]: ";
+    auto isValidStudentNum = [](const string& s) -> bool {
+        return s.length() == 9 && s.find_first_not_of("0123456789") == std::string::npos;
+    };
+    auto isValidYN = [](const string& s) -> bool {
+        return s.length() == 1 && (s[0] == 'Y' || s[0] == 'y' || s[0] == 'N' || s[0] == 'n');
+    };
+    while (isValidYN(tryAgainInput) && (tryAgainInput[0] == 'Y' || tryAgainInput[0] == 'y')) {
+        string studentNumStr;
         if (firstRun) {
-            cin.ignore();
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             firstRun = false;
         }
-        while (!(cin >> studentNumInput)) {
-            cout << "  [Invalid input. Enter student number]: ";
-            clearInput();
-        }
-        cin.ignore();
+        do {
+            cout << "\n  [Enter your student number]: ";
+            getline(cin, studentNumStr);
+            if (!isValidStudentNum(studentNumStr)) {
+                cout << "\n\t==========================================" << endl;
+                cout << "\t|              INVALID INPUT!            |" << endl;
+                cout << "\t| Student number must be exactly 9 digits|" << endl;
+                cout << "\t| and only numbers.                      |" << endl;
+                cout << "\t==========================================\n" << endl;
+            }
+        } while (!isValidStudentNum(studentNumStr));
+        int studentNumInput = stoi(studentNumStr);
 
         int count = 0;
         for (const auto& res : reservations) {
@@ -2236,9 +2450,16 @@ void RoomReservation::viewMyReservations() {
             cout << "\t==========================================" << endl;
         }
 
-        cout << "\n  [View another applicant's reservations? (Y/N)]: ";
-        cin >> tryAgain;
-        cin.ignore();
+        do {
+            cout << "\n  [View another applicant's reservations? (Y/N)]: ";
+            getline(cin, tryAgainInput);
+            if (!isValidYN(tryAgainInput)) {
+                cout << "\n\t==========================================" << endl;
+                cout << "\t|              INVALID INPUT!            |" << endl;
+                cout << "\t|      Type only Y/y or N/n.             |" << endl;
+                cout << "\t==========================================\n" << endl;
+            }
+        } while (!isValidYN(tryAgainInput));
     }
 }
 
@@ -2257,9 +2478,25 @@ void RoomReservation::viewAllRoomsAndReservations() {
         cout << "\t|  [3] CANCEL PROCESS        |" << endl; //After confirming to cancel, Return to Main Menu
         cout << "\t|\t\t\t     |" << endl;
         cout << "\t==============================" << endl;
-        cout << "\n  [Enter your choice (1-3)]: ";
-        cin >> choice;
-        cin.ignore();
+        auto isValidChoice = [](const std::string& s) -> bool {
+            return s.length() == 1 && (s[0] == '1' || s[0] == '2' || s[0] == '3');
+        };
+        std::string choiceInput;
+        int choice = 0;
+        do {
+            cout << "\n  [Enter your choice (1-3)]: ";
+            getline(cin, choiceInput);
+            // Clear input buffer if input is invalid (e.g., multi-digit or extra chars)
+            if (!isValidChoice(choiceInput)) {
+                cin.clear();
+                cout << "\n\t==========================================" << endl;
+                cout << "\t|              INVALID INPUT!            |" << endl;
+                cout << "\t|      Enter ONLY 1, 2, or 3.            |" << endl;
+                cout << "\t|      No letters/special characters.     |" << endl;
+                cout << "\t==========================================\n" << endl;
+            }
+        } while (!isValidChoice(choiceInput));
+        choice = choiceInput[0] - '0';
 
         if (choice == 1) {
             // Display all rooms using block-reading logic
@@ -2493,15 +2730,19 @@ void RoomReservation::displayReservationDetails(const ReservationNode& reservati
 bool RoomReservation::removeReservationByIndex(int index, const string& name) {
     // Remove by index from reservations vector
     vector<ReservationNode*> userReservations = findReservationsByName(name);
-    if (index < 0 || index >= userReservations.size()) return false;
+    if (index < 0 || index >= static_cast<int>(userReservations.size())) {
+        return false;
+    }
     ReservationNode* nodeToDelete = userReservations[index];
+    bool removed = false;
     for (auto it = reservations.begin(); it != reservations.end(); ++it) {
         if (&(*it) == nodeToDelete) {
             reservations.erase(it);
-            return true;
+            removed = true;
+            break;
         }
     }
-    return false;
+    return removed;
 }
 
 void RoomReservation::updateReservationFile() {
