@@ -21,6 +21,7 @@ RoomReservation::~RoomReservation() {
     // No manual cleanup needed for STL containers
 }
 
+//Menu Display
 void RoomReservation::displayMenu() {
     cout << "\n  ****************************************************" << endl;			
     cout << "  ----------------------------------------------------" << endl;	
@@ -47,6 +48,7 @@ void RoomReservation::displayMenu() {
     cout << "  ----------------------------------------------------" << endl;	
 }
 
+//Option 1: Search Room (Linked List)
 void RoomReservation::searchRoom() {
     string roomName, line;
     char choice = 'Y';
@@ -157,6 +159,7 @@ void RoomReservation::searchRoom() {
     }
 }
 
+//Option 2: Reserve Room (Linked List)
 void RoomReservation::reserveRoom() {
     cout << "  ----------------------------------------------------" << endl;	
     cout << "  ****************************************************" << endl;			
@@ -542,6 +545,7 @@ void RoomReservation::reserveRoom() {
     } while (!validConfirm);
 }
 
+//Option 3: Add Room (Linked List)
 void RoomReservation::addRoom() {
     // Clear any leftover input from previous menu selection
     cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -850,7 +854,7 @@ void RoomReservation::addRoom() {
     }
 }
 
-
+//Option 4: Edit Rooms/Reservation (Linked List)
 void RoomReservation::editRoomOrReservation() {
     // Clear any leftover input from previous menu selection
     cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -1700,7 +1704,7 @@ void RoomReservation::editRoomOrReservation() {
         }
     } // end of while (true)
 }
-
+//Option 5: Delete Room (Linked List)
 void RoomReservation::deleteRoom() {
     string tryAgainInput = "Y";
     bool firstRun = true;
@@ -1887,6 +1891,7 @@ void RoomReservation::deleteRoom() {
     }
 }
 
+//Option 6: Cancel Reservation (Linked List)
 void RoomReservation::cancelReservation() {
     cout << "  ----------------------------------------------------" << endl;
     cout << "  ****************************************************" << endl;
@@ -2071,6 +2076,7 @@ void RoomReservation::cancelReservation() {
     }
 }
 
+//Option 7: Join Waitlist (Queue)
 void RoomReservation::joinWaitlist() {
     cout << "  ----------------------------------------------------" << endl;    
     cout << "  ****************************************************" << endl;
@@ -2432,6 +2438,7 @@ void RoomReservation::joinWaitlist() {
     }
 }
 
+//Option 8: View Available Rooms (Linked List)
 void RoomReservation::viewAvailableRooms() {
     cout << "  ----------------------------------------------------" << endl;
     cout << "  ****************************************************" << endl;
@@ -2470,6 +2477,7 @@ void RoomReservation::viewAvailableRooms() {
     file.close();
 }
 
+//Option 9: View My Reservations (File Handling)
 void RoomReservation::viewMyReservations() {
 
             cout << "  ----------------------------------------------------" << endl;	
@@ -2531,6 +2539,7 @@ void RoomReservation::viewMyReservations() {
     }
 }
 
+//Option 10: View All Rooms and Reservations (File Handling)
 void RoomReservation::viewAllRoomsAndReservations() {
     bool keepViewing = true;
     bool firstRun = true;
@@ -2669,18 +2678,22 @@ void RoomReservation::viewAllRoomsAndReservations() {
 
 }
 
+// Gets the room type
 string RoomReservation::getRoomType() const {
     return roomType;
 }
 
+// Sets the room type
 void RoomReservation::setRoomType(const string& type) {
     roomType = type;
 }
 
+// Gets the room name
 string RoomReservation::getRoomName() const {
     return roomName;
 }
 
+// Sets the room name
 void RoomReservation::setRoomName(const string& name) {
     roomName = name;
 }
@@ -2698,6 +2711,7 @@ string RoomReservation::getTimeSlot(int choice) {
     }
 }
 
+// Loads reservations from file
 void RoomReservation::loadReservationsFromFile() {
     ifstream file("reservations-data-list.txt");
     if (!file.is_open()) {
@@ -2732,6 +2746,7 @@ void RoomReservation::loadReservationsFromFile() {
     file.close();
 }
 
+// Saves a reservation to file
 void RoomReservation::saveReservationToFile(const ReservationNode& reservation) {
     ofstream file("reservations-data-list.txt", ios::app);
     if (file.is_open()) {
@@ -2751,12 +2766,13 @@ void RoomReservation::saveReservationToFile(const ReservationNode& reservation) 
     }
 }
 
-
+// Clears the input buffer
 void RoomReservation::clearInput() {
     cin.clear();
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 }
 
+// Gets the room type string for a given choice
 string RoomReservation::getRoomTypeString(int choice) {
     switch (choice) {
         case 1: return "CLASSROOM";
@@ -2765,6 +2781,7 @@ string RoomReservation::getRoomTypeString(int choice) {
     }
 }
 
+// Finds reservations by name
 vector<ReservationNode*> RoomReservation::findReservationsByName(const string& name) {
     vector<ReservationNode*> foundReservations;
     for (auto& r : reservations) {
@@ -2775,6 +2792,7 @@ vector<ReservationNode*> RoomReservation::findReservationsByName(const string& n
     return foundReservations;
 }
 
+// Displays reservation details
 void RoomReservation::displayReservationDetails(const ReservationNode& reservation, int index) {
     cout << "\n  [RESERVATION #" << index << "]:";
     cout << "\n  ====================================================";
@@ -2799,6 +2817,7 @@ void RoomReservation::displayReservationDetails(const ReservationNode& reservati
     cout << "\n  ====================================================" << endl;
 }
 
+// Removes a reservation by index
 bool RoomReservation::removeReservationByIndex(int index, const string& name) {
     // Remove by index from reservations vector
     vector<ReservationNode*> userReservations = findReservationsByName(name);
@@ -2817,6 +2836,7 @@ bool RoomReservation::removeReservationByIndex(int index, const string& name) {
     return removed;
 }
 
+// Updates the reservation file
 void RoomReservation::updateReservationFile() {
     ofstream file("reservations-data-list.txt");
     if (!file.is_open()) {
@@ -2876,6 +2896,7 @@ void RoomReservation::loadWaitlistFromFile() {
     file.close();
 }
 
+// Saves a waitlist entry to file
 void RoomReservation::saveWaitlistToFile(const WaitlistNode& waitlist) {
     ofstream file("waitlist-data.txt", ios::app);
     if (file.is_open()) {
@@ -2895,10 +2916,12 @@ void RoomReservation::saveWaitlistToFile(const WaitlistNode& waitlist) {
     }
 }
 
+// Adds a waitlist entry to the queue
 void RoomReservation::enqueueWaitlist(const WaitlistNode& waitlist) {
     this->waitlist.push(waitlist);
 }
 
+// Displays the waitlist queue
 void RoomReservation::displayWaitlistQueue() {
     cout << "\n  ====================================================";
     cout << "\n   CURRENTLY ON WAITLIST ---------------------------- ";
@@ -2917,6 +2940,7 @@ void RoomReservation::displayWaitlistQueue() {
     cout << "\n  ====================================================" << endl;
 }
 
+// Displays waitlist details
 void RoomReservation::displayWaitlistDetails(const WaitlistNode& waitlist, int index) {
     cout << "\n  [RESERVATION #" << index << "]:";
     cout << "\n  ====================================================";
@@ -2941,6 +2965,7 @@ void RoomReservation::displayWaitlistDetails(const WaitlistNode& waitlist, int i
     cout << "\n  ====================================================" << endl;
 }
 
+// Finds waitlist entries by name
 vector<WaitlistNode> RoomReservation::findWaitlistByName(const string& name) {
     vector<WaitlistNode> foundWaitlists;
     std::queue<WaitlistNode> tempQueue = waitlist;
@@ -2954,6 +2979,7 @@ vector<WaitlistNode> RoomReservation::findWaitlistByName(const string& name) {
     return foundWaitlists;
 }
 
+// Updates the waitlist file
 void RoomReservation::updateWaitlistFile() {
     ofstream file("waitlist-data.txt");
     if (!file.is_open()) {
@@ -2981,7 +3007,7 @@ void RoomReservation::updateWaitlistFile() {
     file.close();
 }
 
-// Room validation function
+// Finds a room in the file
 bool RoomReservation::findRoomInFile(const string& roomName, string& roomType, string& dateAvailability, string& timeAvailability) {
     ifstream file("rooms-data-list.txt");
     if (!file.is_open()) {
