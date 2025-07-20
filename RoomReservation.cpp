@@ -52,6 +52,18 @@ void RoomReservation::searchRoom() {
     char choice = 'Y';
     bool found;
 
+    auto isValidRoomName = [](const string& name) -> bool {
+        if (name.length() > 25) return false;
+        for (char c : name) {
+            if (!(isalnum(c) || c == '-' || c == ' ')) return false;
+        }
+        return true;
+    };
+
+    auto isValidYN = [](const string& s) -> bool {
+        return (s == "Y" || s == "y" || s == "N" || s == "n");
+    };
+
     while (toupper(choice) == 'Y') {
         found = false;
 
@@ -76,9 +88,22 @@ void RoomReservation::searchRoom() {
         cout << "\n  ----------------------------------------------------" << endl;
         cout << "  ****************************************************" << endl;
         cout << "\n  [RSYS: SEARCH A ROOM]" << endl;
-        cout << "\n  [Enter COMPLETE room name]: ";
+        string inputRoomName;
+        bool validRoomName = false;
         cin.ignore();
-        getline(cin, roomName);
+        do {
+            cout << "\n  [Enter COMPLETE room name]: ";
+            getline(cin, inputRoomName);
+            if (!isValidRoomName(inputRoomName)) {
+                cout << "\n\t==========================================" << endl;
+                cout << "\t|              INVALID INPUT!            |" << endl;
+                cout << "\t|    MUST BE A VALID ROOM NAME PLEASE!   |" << endl;
+                cout << "\t==========================================" << endl;
+            } else {
+                validRoomName = true;
+            }
+        } while (!validRoomName);
+        roomName = inputRoomName;
         cout << "\n";
 
         string roomType, roomNameInFile, dateAvailability, timeAvailability;
@@ -117,8 +142,18 @@ void RoomReservation::searchRoom() {
         }
 
         file.close();
-        cout << "  [Enter another room? (Y/N)]: ";
-        cin >> choice;
+        string ynInput;
+        do {
+            cout << "  [Enter another room? (Y/N)]: ";
+            cin >> ynInput;
+            if (!isValidYN(ynInput)) {
+                cout << "\n\t==========================================" << endl;
+                cout << "\t|              INVALID INPUT!            |" << endl;
+                cout << "\t|          Type only Y/y or N/n.         |" << endl;
+                cout << "\t==========================================\n" << endl;
+            }
+        } while (!isValidYN(ynInput));
+        choice = ynInput[0];
     }
 }
 

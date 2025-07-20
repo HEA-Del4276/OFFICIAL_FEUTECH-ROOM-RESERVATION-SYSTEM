@@ -10,29 +10,29 @@ int main(){
     RoomReservation roomReservation;
 
     while (true){
-        // Display the menu
         roomReservation.displayMenu();
-        // Get and validate input
-        bool validInput = false;
-        while (!validInput) {
-            cout << "  [RSYS]: Enter your choice (1-11): ";
-            cin >> choice;
-            
-            if (cin.fail()) {
-                cin.clear();
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                cout << "\n\t==========================================" << endl;
-                cout << "\t|              INVALID INPUT!            |" << endl;
-                cout << "\t|     PLEASE ENTER VALID INPUTS ONLY!    |" << endl;
-                cout << "\t==========================================" << endl;
-            } else if (choice >= 1 && choice <= 11) {
-                validInput = true;
-            } else {
-                cout << "\n\t==========================================" << endl;
-                cout << "\t|              INVALID INPUT!            |" << endl;
-                cout << "\t|     PLEASE ENTER VALID INPUTS ONLY!    |" << endl;
-                cout << "\t==========================================" << endl;
-            }
+        string inputStr;
+        cout << "  [RSYS]: Enter your choice (1-11): ";
+        cin >> inputStr;
+        // Only accept if inputStr is all digits, no spaces, no special characters
+        bool isNumber = !inputStr.empty() && inputStr.find_first_not_of("0123456789") == string::npos && inputStr.find(' ') == string::npos;
+        if (!isNumber) {
+            cout << "\n\t==========================================" << endl;
+            cout << "\t|              INVALID INPUT!            |" << endl;
+            cout << "\t|     PLEASE ENTER VALID INPUTS ONLY!    |" << endl;
+            cout << "\t|      (No spaces or special chars)      |" << endl;
+            cout << "\t==========================================" << endl;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            continue;
+        }
+        choice = stoi(inputStr);
+        if (choice < 1 || choice > 11) {
+            cout << "\n\t==========================================" << endl;
+            cout << "\t|              INVALID INPUT!            |" << endl;
+            cout << "\t|     PLEASE ENTER VALID INPUTS ONLY!    |" << endl;
+            cout << "\t==========================================" << endl;
+            continue;
         }
 
         // Handle menu choices
