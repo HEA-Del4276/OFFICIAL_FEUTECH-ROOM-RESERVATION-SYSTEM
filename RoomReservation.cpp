@@ -1617,19 +1617,39 @@ void RoomReservation::editRoomOrReservation() {
 }
 
 void RoomReservation::deleteRoom() {
-    char tryAgain = 'Y';
+    string tryAgainInput = "Y";
     bool firstRun = true;
-    while (toupper(tryAgain) == 'Y') {
+    auto isValidRoomName = [](const string& name) -> bool {
+        if (name.length() < 4 || name.length() > 25) return false;
+        for (char c : name) {
+            if (!isalnum(c) && c != ' ' && c != '-') return false;
+        }
+        return true;
+    };
+    auto isValidYN = [](const string& s) -> bool {
+        return s.length() == 1 && (s[0] == 'Y' || s[0] == 'y' || s[0] == 'N' || s[0] == 'n');
+    };
+    while (isValidYN(tryAgainInput) && (tryAgainInput[0] == 'Y' || tryAgainInput[0] == 'y')) {
         string roomName;
         cout << "  ----------------------------------------------------" << endl;
         cout << "  ****************************************************" << endl;
         cout << "\n  [RSYS: DELETE ROOM]" << endl;
-        cout << "\n  [Enter COMPLETE room name]: ";
-        if (firstRun) {
-            cin.ignore();
-            firstRun = false;
-        }
-        getline(cin, roomName);
+        // Room name input and validation
+        do {
+            if (firstRun) {
+                cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                firstRun = false;
+            }
+            cout << "\n  [Enter COMPLETE room name]: ";
+            getline(cin, roomName);
+            if (!isValidRoomName(roomName)) {
+                cout << "\n\t==========================================" << endl;
+                cout << "\t|              INVALID INPUT!            |" << endl;
+                cout << "\t| Room name must be 4-25 characters,     |" << endl;
+                cout << "\t| only letters, numbers, spaces, or '-'. |" << endl;
+                cout << "\t==========================================\n" << endl;
+            }
+        } while (!isValidRoomName(roomName));
         cout << "\n";
 
         ifstream file("rooms-data-list.txt");
@@ -1682,10 +1702,18 @@ void RoomReservation::deleteRoom() {
 
         if (!found) {
             cout << "  [RSYS: Room Not Found! :C]\n\n";
-            cout << "  [Try another room? (Y/N)]: ";
-            cin >> tryAgain;
-            cin.ignore();
-            if (toupper(tryAgain) != 'Y') {
+            // Strict Y/N input for try another room
+            do {
+                cout << "  [Try another room? (Y/N)]: ";
+                getline(cin, tryAgainInput);
+                if (!isValidYN(tryAgainInput)) {
+                    cout << "\n\t==========================================" << endl;
+                    cout << "\t|              INVALID INPUT!            |" << endl;
+                    cout << "\t|      Type only Y/y or N/n.             |" << endl;
+                    cout << "\t==========================================\n" << endl;
+                }
+            } while (!isValidYN(tryAgainInput));
+            if (tryAgainInput[0] != 'Y' && tryAgainInput[0] != 'y') {
                 cout << "\n  [Returning to main menu...]" << endl;
                 return;
             }
@@ -1693,11 +1721,19 @@ void RoomReservation::deleteRoom() {
         }
 
         // Ask for confirmation to delete
-        char confirm;
-        cout << "  [Confirm deletion of this room? (Y/N)]: ";
-        cin >> confirm;
-        cin.ignore();
-        if (toupper(confirm) == 'Y') {
+        string confirmInput;
+        do {
+            cout << "  [Confirm deletion of this room? (Y/N)]: ";
+            getline(cin, confirmInput);
+            if (!isValidYN(confirmInput)) {
+                cout << "\n\t==========================================" << endl;
+                cout << "\t|              INVALID INPUT!            |" << endl;
+                cout << "\t|      Type only Y/y or N/n.             |" << endl;
+                cout << "\t==========================================\n" << endl;
+            }
+        } while (!isValidYN(confirmInput));
+
+        if (confirmInput[0] == 'Y' || confirmInput[0] == 'y') {
             // Remove the room block from lines
             vector<string> newLines;
             bool deleted = false;
@@ -1730,20 +1766,35 @@ void RoomReservation::deleteRoom() {
             cout << "   Room Name: " << roomName << "\n";
             cout << "   -------------------------------------------------- \n";
             cout << "  ====================================================\n";
-            // Ask if they want to delete another room
-            cout << "\n  [Delete another room? (Y/N)]: ";
-            cin >> tryAgain;
-            cin.ignore();
-            if (toupper(tryAgain) != 'Y') {
+            // Strict Y/N input for delete another room
+            do {
+                cout << "\n  [Delete another room? (Y/N)]: ";
+                getline(cin, tryAgainInput);
+                if (!isValidYN(tryAgainInput)) {
+                    cout << "\n\t==========================================" << endl;
+                    cout << "\t|              INVALID INPUT!            |" << endl;
+                    cout << "\t|      Type only Y/y or N/n.             |" << endl;
+                    cout << "\t==========================================" << endl;
+                }
+            } while (!isValidYN(tryAgainInput));
+            if (tryAgainInput[0] != 'Y' && tryAgainInput[0] != 'y') {
                 cout << "\n  [Returning to main menu...]" << endl;
                 return;
             }
         } else {
             cout << "\n  [Room deletion cancelled.]" << endl;
-            cout << "  [Try another room? (Y/N)]: ";
-            cin >> tryAgain;
-            cin.ignore();
-            if (toupper(tryAgain) != 'Y') {
+            // Strict Y/N input for try another room
+            do {
+                cout << "  [Try another room? (Y/N)]: ";
+                getline(cin, tryAgainInput);
+                if (!isValidYN(tryAgainInput)) {
+                    cout << "\n\t==========================================" << endl;
+                    cout << "\t|              INVALID INPUT!            |" << endl;
+                    cout << "\t|           Type only Y/y or N/n.        |" << endl;
+                    cout << "\t==========================================\n" << endl;
+                }
+            } while (!isValidYN(tryAgainInput));
+            if (tryAgainInput[0] != 'Y' && tryAgainInput[0] != 'y') {
                 cout << "\n  [Returning to main menu...]" << endl;
                 return;
             }
