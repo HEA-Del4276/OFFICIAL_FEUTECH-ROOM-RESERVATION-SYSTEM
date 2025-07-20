@@ -239,7 +239,7 @@ void RoomReservation::reserveRoom() {
                 cin.ignore();
                 
                 if (tryAgain != 'Y' && tryAgain != 'y') {
-                    cout << "\n  [Room selection cancelled. Returning to main menu...]" << endl;
+                    cout << "\n  [Room selection cancelled. Returning to main menu]" << endl;
                     return;
                 }
             }
@@ -318,13 +318,13 @@ void RoomReservation::reserveRoom() {
         cout << "\n  ====================================================";
         cout << "\n   ----------- RESERVATION CONFIRMED! --------------- ";
         cout << "\n   Your reservation has been successfully added!";
-        cout << "\n   Reservation ID: RES" << newReservation.studentNum;
         cout << "\n   -------------------------------------------------- ";
         cout << "\n  ====================================================" << endl;
     } else {
         cout << "\n  [Reservation cancelled. Returning to main menu...]" << endl;
     }
 }
+
 void RoomReservation::addRoom() {
     char more = 'Y';
     while (toupper(more) == 'Y') {
@@ -622,7 +622,7 @@ void RoomReservation::editRoomOrReservation() {
                 cout << "\t|  [3] 12:00PM-5:00PM        |" << endl;
                 cout << "\t|  [4] 12:00PM-7:00PM        |" << endl;
                 cout << "\t|  [5] CANCEL PROCESS        |" << endl;
-                cout << "\t==============================" << endl;
+                cout << "\t==============================\n" << endl;
                 for (int i = 0; i < numTimes; ++i) {
                     cout << "  [TIME #" << (i+1) << "]: ";
                     int timeChoice;
@@ -691,20 +691,29 @@ void RoomReservation::editRoomOrReservation() {
         while (true) {
             cout << "\n  ----------------------------------------------------" << endl;
             cout << "\n  [RSYS: EDIT RESERVATION]" << endl;
-            cout << "\n  [Enter applicant's name]: ";
-            string applicantName;
-            getline(cin, applicantName);
+            cout << "\n  [Enter applicant's student number]: ";
+            int studentNumInput;
+            while (!(cin >> studentNumInput)) {
+                cout << "  [Invalid input. Enter student number]: ";
+                clearInput();
+            }
+            cin.ignore();
 
-            // Find reservation by name
-            vector<ReservationNode*> userReservations = findReservationsByName(applicantName);
+            // Find reservation by student number
+            vector<ReservationNode*> userReservations;
+            for (auto& res : reservations) {
+                if (res.studentNum == studentNumInput) {
+                    userReservations.push_back(&res);
+                }
+            }
             if (userReservations.empty()) {
-                cout << "\n  [RSYS: No reservations found for '" << applicantName << "' :C]" << endl;
+                cout << "\n  [RSYS: No reservations found for student number '" << studentNumInput << "' :C]" << endl;
                 char tryAgain;
-                cout << "\n  [Try another name? (Y/N)]: ";
+                cout << "\n  [Try another student number? (Y/N)]: ";
                 cin >> tryAgain;
                 cin.ignore();
                 if (toupper(tryAgain) == 'Y') {
-                    continue; // Try another name in the same edit reservation flow
+                    continue; // Try another student number in the same edit reservation flow
                 } else {
                     break; // Back to EDIT OPTIONS menu
                 }
@@ -737,92 +746,98 @@ void RoomReservation::editRoomOrReservation() {
 
             // Proceed to edit reservation
             bool updateAnother = true;
-        while (updateAnother) {
-            // Display details
-            displayReservationDetails(*reservation, 1);
-            cout << "\n\t==============================" << endl;
-            cout << "\t|  EDIT RESERVATION OPTIONS  |" << endl;
-            cout << "\t==============================" << endl;
-            cout << "\t|\t\t\t     |" << endl;
-            cout << "\t|  [1] APPLICANT DETAILS     |" << endl;
-            cout << "\t|  [2] ACTIVITY DETAILS      |" << endl;
-            cout << "\t|  [3] ROOM DETAILS          |" << endl;
-            cout << "\t|  [4] CANCEL PROCESS        |" << endl;
-            cout << "\t|\t\t\t     |" << endl;
-            cout << "\t==============================" << endl;
-            int editChoice;
-            cout << "\n  [Select action (1-4)]: ";
-            cin >> editChoice;
-            cin.ignore();
-            if (editChoice == 1) {
-                cout << "\n  ----------------------------------------------------" << endl;
-                cout << "\n  [RSYS: UPDATE APPLICANT DETAILS]" << endl;
-                cout << "\n  [Enter your name]: ";
-                getline(cin, reservation->name);
-                cout << "  [Enter student number]: ";
-                cin >> reservation->studentNum;
-                cin.ignore();
-                cout << "  [Enter program]: ";
-                getline(cin, reservation->program);
-                cout << "  [Enter section]: ";
-                getline(cin, reservation->section);
-            } else if (editChoice == 2) {
-                cout << "\n  ----------------------------------------------------" << endl;
-                cout << "\n  [RSYS: UPDATE ACTIVITY DETAILS]" << endl;
-                cout << "\n  [Enter activity name]: ";
-                getline(cin, reservation->activityName);
-                cout << "  [Date (MM/DD/YYYY)]: ";
-                getline(cin, reservation->activityDate);
-                cout << "  [Start time (0AM/0PM)]: ";
-                getline(cin, reservation->activityStart);
-                cout << "  [End Time (0AM/0PM)]: ";
-                getline(cin, reservation->activityEnd);
-                cout << "  [No. of Participants]: ";
-                cin >> reservation->numparticipants;
-                cin.ignore();
-            } else if (editChoice == 3) {
-                cout << "\n  ----------------------------------------------------" << endl;
-                cout << "\n  [RSYS: UPDATE ROOM DETAILS]" << endl;
+            while (updateAnother) {
+                // Display details
+                displayReservationDetails(*reservation, 1);
                 cout << "\n\t==============================" << endl;
-                cout << "\t|        TYPE OF ROOM        |" << endl;
+                cout << "\t|  EDIT RESERVATION OPTIONS  |" << endl;
                 cout << "\t==============================" << endl;
                 cout << "\t|\t\t\t     |" << endl;
-                cout << "\t|  [1] CLASSROOM             |" << endl;
-                cout << "\t|  [2] ACTIVITY/EVENT ROOM   |" << endl;
-                cout << "\t|  [3] CANCEL PROCESS        |" << endl;
+                cout << "\t|  [1] APPLICANT DETAILS     |" << endl;
+                cout << "\t|  [2] ACTIVITY DETAILS      |" << endl;
+                cout << "\t|  [3] ROOM DETAILS          |" << endl;
+                cout << "\t|  [4] CANCEL PROCESS        |" << endl;
                 cout << "\t|\t\t\t     |" << endl;
                 cout << "\t==============================" << endl;
-                int typeChoice;
-                cout << "\n  [Enter your choice (1-3)]: ";
-                cin >> typeChoice;
+                int editChoice;
+                cout << "\n  [Select action (1-4)]: ";
+                cin >> editChoice;
                 cin.ignore();
-                if (typeChoice == 1) reservation->roomType = "CLASSROOM";
-                else if (typeChoice == 2) reservation->roomType = "ACTIVITY/EVENT ROOM";
-                else if (typeChoice == 3) continue;
-                cout << "  [Room Floor & Name]: ";
-                getline(cin, reservation->roomName);
-            } else if (editChoice == 4) {
-                break;
-            }
+                if (editChoice == 1) {
+                    cout << "\n  ----------------------------------------------------" << endl;
+                    cout << "\n  [RSYS: UPDATE APPLICANT DETAILS]" << endl;
+                    cout << "\n  [Enter your name]: ";
+                    getline(cin, reservation->name);
+                    cout << "  [Enter student number]: ";
+                    while (!(cin >> reservation->studentNum)) {
+                        cout << "  [Invalid input. Enter student number]: ";
+                        clearInput();
+                    }
+                    cin.ignore();
+                    cout << "  [Enter program]: ";
+                    getline(cin, reservation->program);
+                    cout << "  [Enter section]: ";
+                    getline(cin, reservation->section);
+                } else if (editChoice == 2) {
+                    cout << "\n  ----------------------------------------------------" << endl;
+                    cout << "\n  [RSYS: UPDATE ACTIVITY DETAILS]" << endl;
+                    cout << "\n  [Enter activity name]: ";
+                    getline(cin, reservation->activityName);
+                    cout << "  [Date (MM/DD/YYYY)]: ";
+                    getline(cin, reservation->activityDate);
+                    cout << "  [Start time (0AM/0PM)]: ";
+                    getline(cin, reservation->activityStart);
+                    cout << "  [End Time (0AM/0PM)]: ";
+                    getline(cin, reservation->activityEnd);
+                    cout << "  [No. of Participants]: ";
+                    while (!(cin >> reservation->numparticipants)) {
+                        cout << "  [Invalid input. Enter number of participants]: ";
+                        clearInput();
+                    }
+                    cin.ignore();
+                } else if (editChoice == 3) {
+                    cout << "\n  ----------------------------------------------------" << endl;
+                    cout << "\n  [RSYS: UPDATE ROOM DETAILS]" << endl;
+                    cout << "\n\t==============================" << endl;
+                    cout << "\t|        TYPE OF ROOM        |" << endl;
+                    cout << "\t==============================" << endl;
+                    cout << "\t|\t\t\t     |" << endl;
+                    cout << "\t|  [1] CLASSROOM             |" << endl;
+                    cout << "\t|  [2] ACTIVITY/EVENT ROOM   |" << endl;
+                    cout << "\t|  [3] CANCEL PROCESS        |" << endl;
+                    cout << "\t|\t\t\t     |" << endl;
+                    cout << "\t==============================" << endl;
+                    int typeChoice;
+                    cout << "\n  [Enter your choice (1-3)]: ";
+                    cin >> typeChoice;
+                    cin.ignore();
+                    if (typeChoice == 1) reservation->roomType = "CLASSROOM";
+                    else if (typeChoice == 2) reservation->roomType = "ACTIVITY/EVENT ROOM";
+                    else if (typeChoice == 3) continue;
+                    cout << "  [Room Floor & Name]: ";
+                    getline(cin, reservation->roomName);
+                } else if (editChoice == 4) {
+                    break;
+                }
 
-            // Show updated details
-            displayReservationDetails(*reservation, 1);
-            cout << "\n  [RSYS: CONFIRMATION]" << endl;
-            char confirm;
-            cout << "\n  [Confirm updated room details? (Y/N)]: ";
-            cin >> confirm;
-            cin.ignore();
-            if (toupper(confirm) == 'Y') {
-                // Update file
-                updateReservationFile();
+                // Show updated details
+                displayReservationDetails(*reservation, 1);
+                cout << "\n  [RSYS: CONFIRMATION]" << endl;
+                char confirm;
+                cout << "\n  [Confirm updated room details? (Y/N)]: ";
+                cin >> confirm;
+                cin.ignore();
+                if (toupper(confirm) == 'Y') {
+                    // Update file
+                    updateReservationFile();
+                }
+                char updateMore;
+                cout << "  [Update another detail? (Y/N)]: ";
+                cin >> updateMore;
+                cin.ignore();
+                updateAnother = (toupper(updateMore) == 'Y');
             }
-            char updateMore;
-            cout << "  [Update another detail? (Y/N)]: ";
-            cin >> updateMore;
-            cin.ignore();
-            updateAnother = (toupper(updateMore) == 'Y');
-        }
-        break; // Exit the edit reservation loop
+            break; // Exit the edit reservation loop
 
         } // end of while (true)
         } else {
@@ -976,34 +991,41 @@ void RoomReservation::cancelReservation() {
     
     bool continueCancellation = true;
     while (continueCancellation) {
-        string applicantName;
-        cout << "\n  [Enter Applicant's Name]: ";
-        getline(cin, applicantName);
-        
-        // Find reservations by name
-        vector<ReservationNode*> userReservations = findReservationsByName(applicantName);
-        
+        int studentNumInput;
+        cout << "\n  [Enter Applicant's Student Number]: ";
+        while (!(cin >> studentNumInput)) {
+            cout << "  [Invalid input. Enter student number]: ";
+            clearInput();
+        }
+        cin.ignore();
+
+        // Find reservations by student number
+        vector<ReservationNode*> userReservations;
+        for (auto& res : reservations) {
+            if (res.studentNum == studentNumInput) {
+                userReservations.push_back(&res);
+            }
+        }
+
         if (userReservations.empty()) {
-            cout << "\n  [RSYS: No reservations found for '" << applicantName << "' :C]" << endl;
-            
+            cout << "\n  [RSYS: No reservations found for student number '" << studentNumInput << "' :C]" << endl;
             char tryAnother;
-            cout << "\n  [Try another name? (Y/N)]: ";
+            cout << "\n  [Try another student number? (Y/N)]: ";
             cin >> tryAnother;
             cin.ignore();
-            
             if (tryAnother != 'Y' && tryAnother != 'y') {
                 continueCancellation = false;
             }
             continue;
         }
-        
+
         cout << "\n  [RSYS: Reservation Found: " << userReservations.size() << " :D]" << endl;
-        
+
         // Display all reservations for this user
         for (int i = 0; i < userReservations.size(); i++) {
             displayReservationDetails(*userReservations[i], i + 1);
         }
-        
+
         bool continueWithThisUser = true;
         while (continueWithThisUser) {
             int reservationChoice;
@@ -1035,7 +1057,7 @@ void RoomReservation::cancelReservation() {
                 ReservationNode reservationToCancel = *userReservations[reservationChoice - 1];
 
                 // Remove from STL vector and update file
-                if (removeReservationByIndex(reservationChoice - 1, applicantName)) {
+                if (removeReservationByIndex(reservationChoice - 1, reservationToCancel.name)) {
                     updateReservationFile();
 
                     cout << "\n  ====================================================";
@@ -1068,7 +1090,7 @@ void RoomReservation::cancelReservation() {
                         continueCancellation = false;
                         continueWithThisUser = false;
                     } else {
-                        // Exit this user's session and ask for new applicant name
+                        // Exit this user's session and ask for new applicant student number
                         continueWithThisUser = false;
                     }
                 } else {
@@ -1077,9 +1099,9 @@ void RoomReservation::cancelReservation() {
                 }
             } else {
                 cout << "\n  [Cancellation aborted.]" << endl;
-                // After cancellation is aborted, ask if user wants to try another name
+                // After cancellation is aborted, ask if user wants to try another student number
                 char tryAnother;
-                cout << "\n  [Try another name? (Y/N)]: ";
+                cout << "\n  [Try another student number? (Y/N)]: ";
                 cin >> tryAnother;
                 cin.ignore();
                 if (tryAnother != 'Y' && tryAnother != 'y') {
@@ -1322,86 +1344,32 @@ void RoomReservation::viewMyReservations() {
     char tryAgain = 'Y';
     bool firstRun = true;
     while (toupper(tryAgain) == 'Y') {
-        string searchName;
-        cout << "\n  [Enter your name]: ";
+        int studentNumInput;
+        cout << "\n  [Enter your student number]: ";
         if (firstRun) {
             cin.ignore();
             firstRun = false;
         }
-        getline(cin, searchName);
-
-        // Helper lambda to trim whitespace
-        auto trim = [](string s) -> string {
-            size_t start = s.find_first_not_of(" \t\r\n");
-            size_t end = s.find_last_not_of(" \t\r\n");
-            if (start == string::npos || end == string::npos) return "";
-            return s.substr(start, end - start + 1);
-        };
-        // Helper lambda to lowercase a string
-        auto toLower = [](string s) -> string {
-            for (char& c : s) c = tolower(static_cast<unsigned char>(c));
-            return s;
-        };
-        string searchNameTrimmed = toLower(trim(searchName));
-
-        ifstream file("reservations-data-list.txt");
-        if (!file.is_open()) {
-            cout << "\n  [ERROR: Unable to open reservations file.]" << endl;
-            return;
+        while (!(cin >> studentNumInput)) {
+            cout << "  [Invalid input. Enter student number]: ";
+            clearInput();
         }
+        cin.ignore();
 
         int count = 0;
-        while (true) {
-            string name, studentNum, program, section, activityName, activityDate, startTime, endTime, participants, roomType, roomName;
-            // Skip empty lines before reading a block
-            while (getline(file, name) && trim(name).empty()) {}
-            if (file.eof() || name.empty()) break;
-            getline(file, studentNum);
-            getline(file, program);
-            getline(file, section);
-            getline(file, activityName);
-            getline(file, activityDate);
-            getline(file, startTime);
-            getline(file, endTime);
-            getline(file, participants);
-            getline(file, roomType);
-            getline(file, roomName);
-
-            string nameTrimmed = toLower(trim(name));
-            if (nameTrimmed == searchNameTrimmed) {
-                count++;
-                cout << "\n  [RESERVATION #" << count << "]:" << endl;
-                cout << "  ====================================================" << endl;
-                cout << "   RESERVATION DETAILS ------------------------------" << endl;
-                cout << "   [APPLICANT DETAILS]" << endl;
-                cout << "   Name: " << name << endl;
-                cout << "   Student Number: " << studentNum << endl;
-                cout << "   Program: " << program << endl;
-                cout << "   Section: " << section << endl;
-                cout << "   -------------------------------------------------- " << endl;
-                cout << "   [ACTIVITY DETAILS]" << endl;
-                cout << "   Activity Name: " << activityName << endl;
-                cout << "   Date (MM/DD/YYYY): " << activityDate << endl;
-                cout << "   [Start time (0AM/0PM)]: " << startTime << endl;
-                cout << "   [End Time (0AM/0PM)]: " << endTime << endl;
-                cout << "   [No. of Participants]: " << participants << endl;
-                cout << "   -------------------------------------------------- " << endl;
-                cout << "   [ROOM DETAILS]" << endl;
-                cout << "   Type of Room: " << roomType << endl;
-                cout << "   Room Floor & Name: " << roomName << endl;
-                cout << "   -------------------------------------------------- " << endl;
-                cout << "  ====================================================" << endl;
+        for (const auto& res : reservations) {
+            if (res.studentNum == studentNumInput) {
+                displayReservationDetails(res, ++count);
             }
         }
 
         if (count == 0) {
             cout << "\n\t==========================================" << endl;
             cout << "\t|          APPLICANT NOT FOUND!          |" << endl;
-            cout << "\t|  PLEASE ENTER AN EXISTING APPLICANT    |" << endl;
+            cout << "\t|  PLEASE ENTER AN EXISTING STUDENT NUMBER|" << endl;
             cout << "\t==========================================" << endl;
         }
 
-        file.close();
         cout << "\n  [View another applicant's reservations? (Y/N)]: ";
         cin >> tryAgain;
         cin.ignore();

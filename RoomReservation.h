@@ -80,8 +80,8 @@ private:
     int action;
 
     // STL Containers for Reservations and Waitlist
-    vector<ReservationNode> reservations;   // Replaces linked list
-    queue<WaitlistNode> waitlist;           // Replaces manual queue
+    vector<ReservationNode> reservations;
+    queue<WaitlistNode> waitlist;
 
     // Helper methods
     void loadReservationsFromFile();
