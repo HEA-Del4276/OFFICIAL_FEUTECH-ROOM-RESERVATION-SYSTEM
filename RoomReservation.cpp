@@ -298,8 +298,8 @@ void RoomReservation::reserveRoom() {
         if (!valid) {
             cout << "\n\t==========================================" << endl;
             cout << "\t|              INVALID INPUT!            |" << endl;
-            cout << "\t|  Date must be MM/DD/YYYY, >= 07/20/2025|" << endl;
-            cout << "\t|  Day must be 1-31, month 1-12.         |" << endl;
+            cout << "\t|  PLEASE FOLLOW THE FORMAT (MM/DD/YYYY) |" << endl;
+            cout << "\t| DATE MUST BE ON OR ABOVE JULY 20, 2025 |" << endl;
             cout << "\t==========================================" << endl;
             continue;
         }
@@ -332,7 +332,7 @@ void RoomReservation::reserveRoom() {
         if (!isValidTime(stInput)) {
             cout << "\n\t==========================================" << endl;
             cout << "\t|              INVALID INPUT!            |" << endl;
-            cout << "\t|  Format: 0AM/0PM or 0:00AM/PM only.    |" << endl;
+            cout << "\t|  Format: 0AM/0PM or 0:00AM/PM ONLY.    |" << endl;
             cout << "\t==========================================\n" << endl;
             continue;
         }
@@ -348,7 +348,6 @@ void RoomReservation::reserveRoom() {
             cout << "\n\t==========================================" << endl;
             cout << "\t|              INVALID INPUT!            |" << endl;
             cout << "\t|  Format: 0AM/0PM or 0:00AM/PM only.    |" << endl;
-            cout << "\t|  No extra/special characters allowed.   |" << endl;
             cout << "\t==========================================" << endl;
             continue;
         }
@@ -442,14 +441,14 @@ void RoomReservation::reserveRoom() {
                     if (tryAgainInput.length() == 1 && (tryAgainInput[0] == 'Y' || tryAgainInput[0] == 'y' || tryAgainInput[0] == 'N' || tryAgainInput[0] == 'n')) {
                         validTryAgain = true;
                     } else {
-                        cout << "\n\t==========================================" << endl;
-                        cout << "\t|              INVALID INPUT!            |" << endl;
-                        cout << "\t|      Type only Y/y or N/n.             |" << endl;
-                        cout << "\t==========================================\n" << endl;
+                            cout << "\n\t==========================================" << endl;
+                            cout << "\t|              INVALID INPUT!            |" << endl;
+                            cout << "\t|          Type only Y/y or N/n.         |" << endl;
+                            cout << "\t==========================================\n" << endl;
                     }
                 } while (!validTryAgain);
                 if (tryAgainInput[0] != 'Y' && tryAgainInput[0] != 'y') {
-                    cout << "\n  [Room selection cancelled. Returning to main menu]" << endl;
+                    cout << "\n  [RSYS: Room selection cancelled. Returning to main menu]" << endl;
                     return;
                 }
             }
@@ -481,7 +480,7 @@ void RoomReservation::reserveRoom() {
                 cin.ignore();
                 
                 if (tryAgain != 'Y' && tryAgain != 'y') {
-                    cout << "\n  [Room selection cancelled. Returning to main menu...]" << endl;
+                    cout << "\n  [RSYS:Room selection cancelled. Returning to main menu...]" << endl;
                     return;
                 }
             }
@@ -535,10 +534,10 @@ void RoomReservation::reserveRoom() {
                 cout << "\n  [Reservation cancelled. Returning to main menu...]" << endl;
             }
         } else {
-            cout << "\n\t==========================================" << endl;
-            cout << "\t|              INVALID INPUT!            |" << endl;
-            cout << "\t|          Type only Y/y or N/n.         |" << endl;
-            cout << "\t==========================================" << endl;
+                cout << "\n\t==========================================" << endl;
+                cout << "\t|              INVALID INPUT!            |" << endl;
+                cout << "\t|          Type only Y/y or N/n.         |" << endl;
+                cout << "\t==========================================" << endl;
         }
     } while (!validConfirm);
 }
@@ -596,7 +595,7 @@ void RoomReservation::addRoom() {
             if (roomNameInput.length() < 4 || roomNameInput.length() > 25) {
                 cout << "\n\t==========================================" << endl;
                 cout << "\t|              INVALID INPUT!            |" << endl;
-                cout << "\t|  Room name must be 4-25 characters.    |" << endl;
+                cout << "\t|    Room name must be 4-25 characters.  |" << endl;
                 cout << "\t==========================================\n" << endl;
                 continue;
             }
@@ -638,10 +637,10 @@ void RoomReservation::addRoom() {
                             return;
                         }
                     } else {
-                        cout << "\n\t==========================================" << endl;
-                        cout << "\t|              INVALID INPUT!            |" << endl;
-                        cout << "\t|      Type only Y/y or N/n.             |" << endl;
-                        cout << "\t==========================================\n" << endl;
+                            cout << "\n\t==========================================" << endl;
+                            cout << "\t|              INVALID INPUT!            |" << endl;
+                            cout << "\t|          Type only Y/y or N/n.         |" << endl;
+                            cout << "\t==========================================\n" << endl;
                     }
                 } while (true);
                 continue;
@@ -680,7 +679,8 @@ void RoomReservation::addRoom() {
                 if (dInput.length() != 10 || dInput[2] != '/' || dInput[5] != '/') {
                     cout << "\n\t==========================================" << endl;
                     cout << "\t|              INVALID INPUT!            |" << endl;
-                    cout << "\t|  Format must be MM/DD/YYYY.            |" << endl;
+                    cout << "\t|  PLEASE FOLLOW THE FORMAT (MM/DD/YYYY) |" << endl;
+                    cout << "\t| DATE MUST BE ON OR ABOVE JULY 20, 2025 |" << endl;
                     cout << "\t==========================================\n" << endl;
                     continue;
                 }
@@ -690,7 +690,7 @@ void RoomReservation::addRoom() {
                 if (mm.find_first_not_of("0123456789") != string::npos || dd.find_first_not_of("0123456789") != string::npos || yyyy.find_first_not_of("0123456789") != string::npos) {
                     cout << "\n\t==========================================" << endl;
                     cout << "\t|              INVALID INPUT!            |" << endl;
-                    cout << "\t|  Date must be numbers only.            |" << endl;
+                    cout << "\t|        DATE MUST BE NUMBERS ONLY.      |" << endl;
                     cout << "\t==========================================\n" << endl;
                     continue;
                 }
@@ -698,7 +698,8 @@ void RoomReservation::addRoom() {
                 if (month < 1 || month > 12 || day < 1 || day > 31) {
                     cout << "\n\t==========================================" << endl;
                     cout << "\t|              INVALID INPUT!            |" << endl;
-                    cout << "\t|  Month 1-12, Day 1-31 only.            |" << endl;
+                    cout << "\t|  PLEASE FOLLOW THE FORMAT (MM/DD/YYYY) |" << endl;
+                    cout << "\t|         MONTH 1-12, DAY 1-31 ONLY.     |" << endl;
                     cout << "\t==========================================\n" << endl;
                     continue;
                 }
@@ -706,7 +707,8 @@ void RoomReservation::addRoom() {
                 if (year < 2025 || (year == 2025 && (month < 7 || (month == 7 && day < 20)))) {
                     cout << "\n\t==========================================" << endl;
                     cout << "\t|              INVALID INPUT!            |" << endl;
-                    cout << "\t|  Date must be on or after 07/20/2025.  |" << endl;
+                    cout << "\t|  PLEASE FOLLOW THE FORMAT (MM/DD/YYYY) |" << endl;
+                    cout << "\t| DATE MUST BE ON OR ABOVE JULY 20, 2025 |" << endl;
                     cout << "\t==========================================\n" << endl;
                     continue;
                 }
@@ -805,7 +807,7 @@ void RoomReservation::addRoom() {
             } else {
                 cout << "\n\t==========================================" << endl;
                 cout << "\t|              INVALID INPUT!            |" << endl;
-                cout << "\t|      Type only Y/y or N/n.             |" << endl;
+                cout << "\t|          Type only Y/y or N/n.         |" << endl;
                 cout << "\t==========================================\n" << endl;
             }
         } while (!validConfirm);
@@ -896,8 +898,8 @@ void RoomReservation::editRoomOrReservation() {
                 if (oldRoom.length() > 25 || oldRoom.empty()) {
                     cout << "\n\t==========================================" << endl;
                     cout << "\t|              INVALID INPUT!            |" << endl;
-                    cout << "\t|  Room name must be 1-25 characters.    |" << endl;
-                    cout << "\t==========================================" << endl;
+                    cout << "\t|   Room name must be 1-25 characters.   |" << endl;
+                    cout << "\t==========================================\n" << endl;
                     continue;
                 }
                 bool validChars = true;
@@ -907,8 +909,9 @@ void RoomReservation::editRoomOrReservation() {
                 if (!validChars) {
                     cout << "\n\t==========================================" << endl;
                     cout << "\t|              INVALID INPUT!            |" << endl;
-                    cout << "\t|  Only letters, numbers, and '-' allowed|" << endl;
-                    cout << "\t==========================================" << endl;
+                    cout << "\t|    MUST BE A VALID ROOM NAME PLEASE!   |" << endl;
+                    cout << "\t| (Only letters, numbers, & '-' allowed) |" << endl;
+                    cout << "\t==========================================\n" << endl;
                     continue;
                 }
                 validRoomName = true;
@@ -965,8 +968,8 @@ void RoomReservation::editRoomOrReservation() {
                     } else {
                         cout << "\n\t==========================================" << endl;
                         cout << "\t|              INVALID INPUT!            |" << endl;
-                        cout << "\t|      Type only Y/y or N/n.             |" << endl;
-                        cout << "\t==========================================" << endl;
+                        cout << "\t|          Type only Y/y or N/n.         |" << endl;
+                        cout << "\t==========================================\n" << endl;
                     }
                 } while (!validTryAgain);
                 if (tryAgainInput[0] == 'Y' || tryAgainInput[0] == 'y') {
@@ -1006,7 +1009,7 @@ void RoomReservation::editRoomOrReservation() {
                 } else {
                     cout << "\n\t==========================================" << endl;
                     cout << "\t|              INVALID INPUT!            |" << endl;
-                    cout << "\t|      PLEASE ENTER 1-5 ONLY!            |" << endl;
+                    cout << "\t|   PLEASE ENTER A VALID OPTION (1-5)!   |" << endl;
                     cout << "\t==========================================" << endl;
                 }
             } while (!validEditChoice);
@@ -1050,11 +1053,11 @@ void RoomReservation::editRoomOrReservation() {
                 do {
                     cout << "\n  [Enter new complete room name]: ";
                     getline(cin, newNameInput);
-                    if (newNameInput.length() > 25 || newNameInput.empty()) {
+                    if (newNameInput.length() < 4 || newNameInput.length() > 25) {
                         cout << "\n\t==========================================" << endl;
                         cout << "\t|              INVALID INPUT!            |" << endl;
-                        cout << "\t|  Room name must be 1-25 characters.    |" << endl;
-                        cout << "\t==========================================" << endl;
+                        cout << "\t|    MUST BE A VALID ROOM NAME PLEASE!   |" << endl;
+                        cout << "\t==========================================\n" << endl;
                         continue;
                     }
                     bool validChars = true;
@@ -1064,8 +1067,8 @@ void RoomReservation::editRoomOrReservation() {
                     if (!validChars) {
                         cout << "\n\t==========================================" << endl;
                         cout << "\t|              INVALID INPUT!            |" << endl;
-                        cout << "\t|  Only letters, numbers, and '-' allowed|" << endl;
-                        cout << "\t==========================================" << endl;
+                        cout << "\t| (Only letters, numbers, & '-' allowed) |" << endl;
+                        cout << "\t==========================================\n" << endl;
                         continue;
                     }
                     validNewName = true;
@@ -1100,8 +1103,8 @@ void RoomReservation::editRoomOrReservation() {
                         if (dInput.length() != 10 || dInput[2] != '/' || dInput[5] != '/') {
                             cout << "\n\t==========================================" << endl;
                             cout << "\t|              INVALID INPUT!            |" << endl;
-                            cout << "\t|  Format must be MM/DD/YYYY.            |" << endl;
-                            cout << "\t==========================================" << endl;
+                            cout << "\t|  PLEASE FOLLOW THE FORMAT (MM/DD/YYYY) |" << endl;
+                            cout << "\t==========================================\n" << endl;
                             continue;
                         }
                         string mm = dInput.substr(0,2);
@@ -1110,23 +1113,25 @@ void RoomReservation::editRoomOrReservation() {
                         if (mm.find_first_not_of("0123456789") != string::npos || dd.find_first_not_of("0123456789") != string::npos || yyyy.find_first_not_of("0123456789") != string::npos) {
                             cout << "\n\t==========================================" << endl;
                             cout << "\t|              INVALID INPUT!            |" << endl;
-                            cout << "\t|  Date must be numbers only.            |" << endl;
-                            cout << "\t==========================================" << endl;
+                            cout << "\t|        DATE MUST BE NUMBERS ONLY.      |" << endl;
+                            cout << "\t==========================================\n" << endl;
                             continue;
                         }
                         int month = stoi(mm), day = stoi(dd), year = stoi(yyyy);
                         if (month < 1 || month > 12 || day < 1 || day > 31) {
                             cout << "\n\t==========================================" << endl;
                             cout << "\t|              INVALID INPUT!            |" << endl;
-                            cout << "\t|  Month 1-12, Day 1-31 only.            |" << endl;
-                            cout << "\t==========================================" << endl;
+                            cout << "\t|  PLEASE FOLLOW THE FORMAT (MM/DD/YYYY) |" << endl;
+                            cout << "\t|         MONTH 1-12, DAY 1-31 ONLY.     |" << endl;
+                            cout << "\t==========================================\n" << endl;
                             continue;
                         }
                         if (year < 2025 || (year == 2025 && (month < 7 || (month == 7 && day < 20)))) {
                             cout << "\n\t==========================================" << endl;
                             cout << "\t|              INVALID INPUT!            |" << endl;
-                            cout << "\t|  Date must be on or after 07/20/2025.  |" << endl;
-                            cout << "\t==========================================" << endl;
+                            cout << "\t|  PLEASE FOLLOW THE FORMAT (MM/DD/YYYY) |" << endl;
+                            cout << "\t| DATE MUST BE ON OR ABOVE JULY 20, 2025 |" << endl;
+                            cout << "\t==========================================\n" << endl;
                             continue;
                         }
                         validDate = true;
@@ -1154,8 +1159,8 @@ void RoomReservation::editRoomOrReservation() {
                     } else {
                         cout << "\n\t==========================================" << endl;
                         cout << "\t|              INVALID INPUT!            |" << endl;
-                        cout << "\t|      Enter a valid number (1-4).       |" << endl;
-                        cout << "\t==========================================" << endl;
+                        cout << "\t|   PLEASE ENTER A VALID OPTION (1-4)!   |" << endl;
+                        cout << "\t==========================================\n" << endl;
                     }
                 } while (!validNumTimes);
                 vector<string> selectedTimes;
@@ -1184,8 +1189,8 @@ void RoomReservation::editRoomOrReservation() {
                         } else {
                             cout << "\n\t==========================================" << endl;
                             cout << "\t|              INVALID INPUT!            |" << endl;
-                            cout << "\t|      Enter a valid number (1-4).       |" << endl;
-                            cout << "\t==========================================" << endl;
+                            cout << "\t|   PLEASE ENTER A VALID OPTION (1-4)!   |" << endl;
+                            cout << "\t==========================================\n" << endl;
                         }
                     } while (!validTimeChoice);
                     selectedTimes.push_back(getTimeSlot(timeChoice));
@@ -1224,8 +1229,8 @@ void RoomReservation::editRoomOrReservation() {
                 } else {
                     cout << "\n\t==========================================" << endl;
                     cout << "\t|              INVALID INPUT!            |" << endl;
-                    cout << "\t|      Type only Y/y or N/n.             |" << endl;
-                    cout << "\t==========================================" << endl;
+                    cout << "\t|          Type only Y/y or N/n.         |" << endl;
+                    cout << "\t==========================================\n" << endl;
                 }
             } while (!validConfirm);
             if (confirmInput[0] == 'Y' || confirmInput[0] == 'y') {
@@ -1256,8 +1261,8 @@ void RoomReservation::editRoomOrReservation() {
                 } else {
                     cout << "\n\t==========================================" << endl;
                     cout << "\t|              INVALID INPUT!            |" << endl;
-                    cout << "\t|      Type only Y/y or N/n.             |" << endl;
-                    cout << "\t==========================================" << endl;
+                    cout << "\t|          Type only Y/y or N/n.         |" << endl;
+                    cout << "\t==========================================\n" << endl;
                 }
             } while (!validUpdateMore);
             updateAnother = (updateMoreInput[0] == 'Y' || updateMoreInput[0] == 'y');
@@ -1297,8 +1302,8 @@ void RoomReservation::editRoomOrReservation() {
                     } else {
                         cout << "\n\t==========================================" << endl;
                         cout << "\t|              INVALID INPUT!            |" << endl;
-                        cout << "\t|      Type only Y/y or N/n.             |" << endl;
-                        cout << "\t==========================================" << endl;
+                        cout << "\t|          Type only Y/y or N/n.         |" << endl;
+                        cout << "\t==========================================\n" << endl;
                     }
                 } while (!validTryAgain);
                 if (tryAgainInput[0] == 'Y' || tryAgainInput[0] == 'y') {
@@ -1330,10 +1335,16 @@ void RoomReservation::editRoomOrReservation() {
                     if (selectedIndex >= 1 && selectedIndex <= (int)userReservations.size()) {
                         validSelection = true;
                     } else {
-                        cout << "  [Invalid input. Try again.]" << endl;
+                            cout << "\n\t==========================================" << endl;
+                            cout << "\t|              INVALID INPUT!            |" << endl;
+                            cout << "\t| PLEASE ENTER A VALID INPUT. TRY AGAIN. |" << endl;
+                            cout << "\t==========================================\n" << endl;
                     }
                 } else {
-                    cout << "  [Invalid input. Try again.]" << endl;
+                    cout << "\n\t==========================================" << endl;
+                    cout << "\t|              INVALID INPUT!            |" << endl;
+                    cout << "\t| PLEASE ENTER A VALID INPUT. TRY AGAIN. |" << endl;
+                    cout << "\t==========================================\n" << endl;
                 }
             } while (!validSelection);
 
@@ -1367,8 +1378,8 @@ void RoomReservation::editRoomOrReservation() {
                     } else {
                         cout << "\n\t==========================================" << endl;
                         cout << "\t|              INVALID INPUT!            |" << endl;
-                        cout << "\t|      PLEASE ENTER 1-4 ONLY!            |" << endl;
-                        cout << "\t==========================================" << endl;
+                        cout << "\t|   PLEASE ENTER A VALID OPTION (1-4)!   |" << endl;
+                        cout << "\t==========================================\n" << endl;
                     }
                 } while (!validEditChoice);
                 if (editChoice == 1) {
@@ -1386,8 +1397,11 @@ void RoomReservation::editRoomOrReservation() {
                             if (!(isalpha(c) || c == ' ' || c == '.')) { valid = false; break; }
                         }
                         if (!valid) {
-                            cout << "\n  [INVALID NAME: Must be 3-30 letters, no numbers or symbols (except '.')]\n";
-                            continue;
+                            cout << "\n\t==========================================" << endl;
+                            cout << "\t|              INVALID INPUT!            |" << endl;
+                            cout << "\t|    PLEASE ENTER A VALID NAME (3-30)!   |" << endl;
+                            cout << "\t==========================================" << endl;
+                        continue;
                         }
                         for (char& c : nameInput) c = toupper(c);
                         reservation->name = nameInput;
@@ -1401,8 +1415,11 @@ void RoomReservation::editRoomOrReservation() {
                         getline(cin, snInput);
                         bool valid = snInput.length() == 9 && snInput.find_first_not_of("0123456789") == string::npos;
                         if (!valid) {
-                            cout << "\n  [INVALID STUDENT NUMBER: Must be exactly 9 digits, numbers only]\n";
-                            continue;
+                        cout << "\n\t==========================================" << endl;
+                        cout << "\t|              INVALID INPUT!            |" << endl;
+                        cout << "\t|  Student number must be 9 digits only. |" << endl;
+                        cout << "\t==========================================\n" << endl;
+                        continue;
                         }
                         reservation->studentNum = stoi(snInput);
                         break;
@@ -1418,8 +1435,11 @@ void RoomReservation::editRoomOrReservation() {
                             if (!isalpha(c) && c != ' ') { valid = false; break; }
                         }
                         if (!valid) {
-                            cout << "\n  [INVALID PROGRAM: Letters only, 6-10 characters]\n";
-                            continue;
+                        cout << "\n\t==========================================" << endl;
+                        cout << "\t|              INVALID INPUT!            |" << endl;
+                        cout << "\t|  Program must be 6-10 letters only.    |" << endl;
+                        cout << "\t==========================================\n" << endl;
+                        continue;
                         }
                         for (char& c : progInput) c = toupper(c);
                         reservation->program = progInput;
@@ -1438,8 +1458,12 @@ void RoomReservation::editRoomOrReservation() {
                             if (isalpha(c)) hasLetter = true;
                         }
                         if (!valid || !hasLetter) {
-                            cout << "\n  [INVALID SECTION: 4-5 characters, alphanumeric, must contain letters]\n";
-                            continue;
+                        cout << "\n\t==========================================" << endl;
+                        cout << "\t|              INVALID INPUT!            |" << endl;
+                        cout << "\t|  Section must be 4-5 letters/numbers.  |" << endl;
+                        cout << "\t|      PLEASE ENTER A VALID SECTION!     |" << endl;
+                        cout << "\t==========================================\n" << endl;
+                        continue;
                         }
                         for (char& c : secInput) c = toupper(c);
                         reservation->section = secInput;
@@ -1456,8 +1480,11 @@ void RoomReservation::editRoomOrReservation() {
                             string actInput;
                             getline(cin, actInput);
                             if (actInput.length() < 10 || actInput.length() > 25) {
-                                cout << "\n  [INVALID: Must be 10-25 characters]\n";
-                                continue;
+                            cout << "\n\t==========================================" << endl;
+                            cout << "\t|              INVALID INPUT!            |" << endl;
+                            cout << "\t|  Activity name must be 10-25 chars.    |" << endl;
+                            cout << "\t==========================================" << endl;
+                            continue;
                             }
                             for (char& c : actInput) c = toupper(c);
                             reservation->activityName = actInput;
@@ -1486,7 +1513,11 @@ void RoomReservation::editRoomOrReservation() {
                                 }
                             }
                             if (!valid) {
-                                cout << "\n  [INVALID DATE: Must be MM/DD/YYYY, on or after 07/20/2025, month 1-12, day 1-31]\n";
+                                cout << "\n\t==========================================" << endl;
+                                cout << "\t|              INVALID INPUT!            |" << endl;
+                                cout << "\t|  PLEASE FOLLOW THE FORMAT (MM/DD/YYYY) |" << endl;
+                                cout << "\t| DATE MUST BE ON OR ABOVE JULY 20, 2025 |" << endl;
+                                cout << "\t==========================================\n" << endl;
                                 continue;
                             }
                             reservation->activityDate = dateInput;
@@ -1517,7 +1548,10 @@ void RoomReservation::editRoomOrReservation() {
                             getline(cin, st);
                             st = toUpper(st);
                             if (!isValidTime(st)) {
-                                cout << "\n  [INVALID TIME: Format must be 0AM/PM or 0:00AM/PM, no symbols except ':']\n";
+                            cout << "\n\t==========================================" << endl;
+                            cout << "\t|              INVALID INPUT!            |" << endl;
+                            cout << "\t|  Format: 0AM/0PM or 0:00AM/PM ONLY.    |" << endl;
+                            cout << "\t==========================================\n" << endl;
                                 continue;
                             }
                             reservation->activityStart = st;
@@ -1531,7 +1565,10 @@ void RoomReservation::editRoomOrReservation() {
                             getline(cin, et);
                             et = toUpper(et);
                             if (!isValidTime(et)) {
-                                cout << "\n  [INVALID TIME: Format must be 0AM/PM or 0:00AM/PM, no symbols except ':']\n";
+                                cout << "\n\t==========================================" << endl;
+                                cout << "\t|              INVALID INPUT!            |" << endl;
+                                cout << "\t|  Format: 0AM/0PM or 0:00AM/PM ONLY.    |" << endl;
+                                cout << "\t==========================================\n" << endl;
                                 continue;
                             }
                             reservation->activityEnd = et;
@@ -1544,8 +1581,11 @@ void RoomReservation::editRoomOrReservation() {
                             string npInput;
                             getline(cin, npInput);
                             if (npInput.find_first_not_of("0123456789") != string::npos || npInput.empty() || stoi(npInput) <= 1) {
-                                cout << "\n  [INVALID: Must be a number greater than 1]\n";
-                                continue;
+                            cout << "\n\t==========================================" << endl;
+                            cout << "\t|              INVALID INPUT!            |" << endl;
+                            cout << "\t|      MUST BE A NUMBER AND ABOVE 1!     |" << endl;
+                            cout << "\t==========================================\n" << endl;
+                            continue;
                             }
                             reservation->numparticipants = stoi(npInput);
                             break;
@@ -1573,15 +1613,43 @@ void RoomReservation::editRoomOrReservation() {
                                 typeChoice = input[0] - '0';
                                 break;
                             } else {
-                                cout << "\n  [INVALID CHOICE: Must be 1-3]\n";
+                                cout << "\n\t==========================================" << endl;
+                                cout << "\t|              INVALID INPUT!            |" << endl;
+                                cout << "\t|   PLEASE ENTER A VALID OPTION (1-3)!   |" << endl;
+                                cout << "\t==========================================\n" << endl;
                             }
                         }
 
                         if (typeChoice == 3) return; // Cancel
                         reservation->roomType = (typeChoice == 1) ? "CLASSROOM" : "ACTIVITY/EVENT ROOM";
 
-                        cout << "\n  [Room Floor & Name]: ";
-                        getline(cin, reservation->roomName);
+                        string roomNameInput;
+                        bool validRoomName = false;
+                        do {
+                            cout << "\n  [Room Floor & Name]: ";
+                            getline(cin, roomNameInput);
+                            if (roomNameInput.length() < 4 || roomNameInput.length() > 25) {
+                            cout << "\n\t==========================================" << endl;
+                            cout << "\t|              INVALID INPUT!            |" << endl;
+                            cout << "\t|    Room name must be 4-25 characters.  |" << endl;
+                            cout << "\t==========================================\n" << endl;
+                                continue;
+                            }
+                            bool validChars = true;
+                            for (char c : roomNameInput) {
+                                if (!(isalnum(c) || c == '-' || c == ' ')) { validChars = false; break; }
+                            }
+                            if (!validChars) {
+                                cout << "\n\t==========================================" << endl;
+                                cout << "\t|              INVALID INPUT!            |" << endl;
+                                cout << "\t|    MUST BE A VALID ROOM NAME PLEASE!   |" << endl;
+                                cout << "\t| (Only letters, numbers, & '-' allowed) |" << endl;
+                                cout << "\t==========================================\n" << endl;
+                                continue;
+                            }
+                            validRoomName = true;
+                        } while (!validRoomName);
+                        reservation->roomName = roomNameInput;
                 } else if (editChoice == 4) {
                     break;
                 }
@@ -1599,7 +1667,7 @@ void RoomReservation::editRoomOrReservation() {
                     } else {
                         cout << "\n\t==========================================" << endl;
                         cout << "\t|              INVALID INPUT!            |" << endl;
-                        cout << "\t|      Type only Y/y or N/n.             |" << endl;
+                        cout << "\t|          Type only Y/y or N/n.         |" << endl;
                         cout << "\t==========================================" << endl;
                     }
                 } while (!validConfirm);
@@ -1617,8 +1685,8 @@ void RoomReservation::editRoomOrReservation() {
                     } else {
                         cout << "\n\t==========================================" << endl;
                         cout << "\t|              INVALID INPUT!            |" << endl;
-                        cout << "\t|      Type only Y/y or N/n.             |" << endl;
-                        cout << "\t==========================================" << endl;
+                        cout << "\t|          Type only Y/y or N/n.         |" << endl;
+                        cout << "\t==========================================\n" << endl;
                     }
                 } while (!validUpdateMore);
                 updateAnother = (updateMoreInput[0] == 'Y' || updateMoreInput[0] == 'y');
@@ -1660,11 +1728,11 @@ void RoomReservation::deleteRoom() {
             cout << "\n  [Enter COMPLETE room name]: ";
             getline(cin, roomName);
             if (!isValidRoomName(roomName)) {
-                cout << "\n\t==========================================" << endl;
-                cout << "\t|              INVALID INPUT!            |" << endl;
-                cout << "\t| Room name must be 4-25 characters,     |" << endl;
-                cout << "\t| only letters, numbers, spaces, or '-'. |" << endl;
-                cout << "\t==========================================\n" << endl;
+                    cout << "\n\t==========================================" << endl;
+                    cout << "\t|              INVALID INPUT!            |" << endl;
+                    cout << "\t|    MUST BE A VALID ROOM NAME PLEASE!   |" << endl;
+                    cout << "\t| (Only letters, numbers, & '-' allowed) |" << endl;
+                    cout << "\t==========================================" << endl;
             }
         } while (!isValidRoomName(roomName));
         cout << "\n";
@@ -1724,10 +1792,10 @@ void RoomReservation::deleteRoom() {
                 cout << "  [Try another room? (Y/N)]: ";
                 getline(cin, tryAgainInput);
                 if (!isValidYN(tryAgainInput)) {
-                    cout << "\n\t==========================================" << endl;
-                    cout << "\t|              INVALID INPUT!            |" << endl;
-                    cout << "\t|      Type only Y/y or N/n.             |" << endl;
-                    cout << "\t==========================================\n" << endl;
+                cout << "\n\t==========================================" << endl;
+                cout << "\t|              INVALID INPUT!            |" << endl;
+                cout << "\t|          Type only Y/y or N/n.         |" << endl;
+                cout << "\t==========================================\n" << endl;
                 }
             } while (!isValidYN(tryAgainInput));
             if (tryAgainInput[0] != 'Y' && tryAgainInput[0] != 'y') {
@@ -1745,7 +1813,7 @@ void RoomReservation::deleteRoom() {
             if (!isValidYN(confirmInput)) {
                 cout << "\n\t==========================================" << endl;
                 cout << "\t|              INVALID INPUT!            |" << endl;
-                cout << "\t|      Type only Y/y or N/n.             |" << endl;
+                cout << "\t|          Type only Y/y or N/n.         |" << endl;
                 cout << "\t==========================================\n" << endl;
             }
         } while (!isValidYN(confirmInput));
@@ -1790,7 +1858,7 @@ void RoomReservation::deleteRoom() {
                 if (!isValidYN(tryAgainInput)) {
                     cout << "\n\t==========================================" << endl;
                     cout << "\t|              INVALID INPUT!            |" << endl;
-                    cout << "\t|      Type only Y/y or N/n.             |" << endl;
+                    cout << "\t|          Type only Y/y or N/n.         |" << endl;
                     cout << "\t==========================================" << endl;
                 }
             } while (!isValidYN(tryAgainInput));
@@ -1807,7 +1875,7 @@ void RoomReservation::deleteRoom() {
                 if (!isValidYN(tryAgainInput)) {
                     cout << "\n\t==========================================" << endl;
                     cout << "\t|              INVALID INPUT!            |" << endl;
-                    cout << "\t|           Type only Y/y or N/n.        |" << endl;
+                    cout << "\t|          Type only Y/y or N/n.         |" << endl;
                     cout << "\t==========================================\n" << endl;
                 }
             } while (!isValidYN(tryAgainInput));
@@ -1847,9 +1915,8 @@ void RoomReservation::cancelReservation() {
             if (!isValidStudentNum(studentNumStr)) {
                 cout << "\n\t==========================================" << endl;
                 cout << "\t|              INVALID INPUT!            |" << endl;
-                cout << "\t| Student number must be exactly 9 digits|" << endl;
-                cout << "\t| and only numbers.                      |" << endl;
-                cout << "\t==========================================\n" << endl;
+                cout << "\t|  Student number must be 9 digits only. |" << endl;
+                cout << "\t==========================================" << endl;
             }
         } while (!isValidStudentNum(studentNumStr));
         int studentNumInput = stoi(studentNumStr);
@@ -1871,7 +1938,7 @@ void RoomReservation::cancelReservation() {
                 if (!isValidYN(tryAnotherInput)) {
                     cout << "\n\t==========================================" << endl;
                     cout << "\t|              INVALID INPUT!            |" << endl;
-                    cout << "\t|      Type only Y/y or N/n.             |" << endl;
+                    cout << "\t|          Type only Y/y or N/n.         |" << endl;
                     cout << "\t==========================================\n" << endl;
                 }
             } while (!isValidYN(tryAnotherInput));
@@ -1902,9 +1969,8 @@ void RoomReservation::cancelReservation() {
                 } else {
                     cout << "\n\t==========================================" << endl;
                     cout << "\t|              INVALID INPUT!            |" << endl;
-                    cout << "\t| Enter a valid number between 1-" << userReservations.size() << ". |" << endl;
-                    cout << "\t| Only numbers, no letters/special chars.|" << endl;
-                    cout << "\t==========================================\n" << endl;
+                    cout << "\t|    PLEASE ENTER AGAIN A VALID NUMBER.  |" << endl;
+                    cout << "\t==========================================" << endl;
                 }
             } while (!validChoice);
 
@@ -1917,17 +1983,26 @@ void RoomReservation::cancelReservation() {
                 if (!isValidYN(confirmInput)) {
                     cout << "\n\t==========================================" << endl;
                     cout << "\t|              INVALID INPUT!            |" << endl;
-                    cout << "\t|      Type only Y/y or N/n.             |" << endl;
-                    cout << "\t==========================================\n" << endl;
+                    cout << "\t|          Type only Y/y or N/n.         |" << endl;
+                    cout << "\t==========================================" << endl;
                 }
             } while (!isValidYN(confirmInput));
 
             if (confirmInput[0] == 'Y' || confirmInput[0] == 'y') {
-                // Get the reservation to be cancelled
-                ReservationNode reservationToCancel = *userReservations[reservationChoice - 1];
+                // Get the reservation to be cancelled (pointer)
+                ReservationNode* reservationToCancelPtr = userReservations[reservationChoice - 1];
+                ReservationNode reservationToCancel = *reservationToCancelPtr;
 
                 // Remove from STL vector and update file
-                if (removeReservationByIndex(reservationChoice - 1, reservationToCancel.name)) {
+                bool removed = false;
+                for (auto it = reservations.begin(); it != reservations.end(); ++it) {
+                    if (&(*it) == reservationToCancelPtr) {
+                        reservations.erase(it);
+                        removed = true;
+                        break;
+                    }
+                }
+                if (removed) {
                     updateReservationFile();
 
                     cout << "\n  ====================================================";
@@ -1958,7 +2033,7 @@ void RoomReservation::cancelReservation() {
                         if (!isValidYN(cancelAnotherInput)) {
                             cout << "\n\t==========================================" << endl;
                             cout << "\t|              INVALID INPUT!            |" << endl;
-                            cout << "\t|      Type only Y/y or N/n.             |" << endl;
+                            cout << "\t|          Type only Y/y or N/n.         |" << endl;
                             cout << "\t==========================================\n" << endl;
                         }
                     } while (!isValidYN(cancelAnotherInput));
@@ -1983,7 +2058,7 @@ void RoomReservation::cancelReservation() {
                     if (!isValidYN(tryAnotherInput)) {
                         cout << "\n\t==========================================" << endl;
                         cout << "\t|              INVALID INPUT!            |" << endl;
-                        cout << "\t|      Type only Y/y or N/n.             |" << endl;
+                        cout << "\t|          Type only Y/y or N/n.         |" << endl;
                         cout << "\t==========================================\n" << endl;
                     }
                 } while (!isValidYN(tryAnotherInput));
@@ -2079,11 +2154,11 @@ void RoomReservation::joinWaitlist() {
             cout << "\n  [Enter room floor & name to waitlist]: ";
             getline(cin, roomToWaitlist);
             if (!isValidRoomName(roomToWaitlist)) {
-                cout << "\n\t==========================================" << endl;
-                cout << "\t|              INVALID INPUT!            |" << endl;
-                cout << "\t| Room name must be 4-25 characters,     |" << endl;
-                cout << "\t| only letters, numbers, spaces, or '-'. |" << endl;
-                cout << "\t==========================================\n" << endl;
+                    cout << "\n\t==========================================" << endl;
+                    cout << "\t|              INVALID INPUT!            |" << endl;
+                    cout << "\t|    MUST BE A VALID ROOM NAME PLEASE!   |" << endl;
+                    cout << "\t| (Only letters, numbers, & '-' allowed) |" << endl;
+                    cout << "\t==========================================\n" << endl;
             }
         } while (!isValidRoomName(roomToWaitlist));
 
@@ -2109,11 +2184,10 @@ void RoomReservation::joinWaitlist() {
                 cout << "\n  [Enter your name]: ";
                 getline(cin, nameInput);
                 if (!isValidName(nameInput)) {
-                    cout << "\n\t==========================================" << endl;
-                    cout << "\t|              INVALID INPUT!            |" << endl;
-                    cout << "\t| Name must be 3-30 letters, no numbers, |" << endl;
-                    cout << "\t| only '.' allowed as special char.      |" << endl;
-                    cout << "\t==========================================\n" << endl;
+                            cout << "\n\t==========================================" << endl;
+                            cout << "\t|              INVALID INPUT!            |" << endl;
+                            cout << "\t|    PLEASE ENTER A VALID NAME (3-30)!   |" << endl;
+                            cout << "\t==========================================" << endl;
                 }
             } while (!isValidName(nameInput));
             newWaitlist.name = toUpper(nameInput);
@@ -2125,8 +2199,7 @@ void RoomReservation::joinWaitlist() {
                 if (!isValidStudentNum(studentNumInput)) {
                     cout << "\n\t==========================================" << endl;
                     cout << "\t|              INVALID INPUT!            |" << endl;
-                    cout << "\t| Student number must be exactly 9 digits|" << endl;
-                    cout << "\t| and only numbers.                      |" << endl;
+                    cout << "\t|  Student number must be 9 digits only. |" << endl;
                     cout << "\t==========================================\n" << endl;
                 }
             } while (!isValidStudentNum(studentNumInput));
@@ -2139,8 +2212,7 @@ void RoomReservation::joinWaitlist() {
                 if (!isValidProgram(programInput)) {
                     cout << "\n\t==========================================" << endl;
                     cout << "\t|              INVALID INPUT!            |" << endl;
-                    cout << "\t| Program must be 6-10 letters, no nums, |" << endl;
-                    cout << "\t| no special chars.                      |" << endl;
+                    cout << "\t|  Program must be 6-10 letters only.    |" << endl;
                     cout << "\t==========================================\n" << endl;
                 }
             } while (!isValidProgram(programInput));
@@ -2153,8 +2225,8 @@ void RoomReservation::joinWaitlist() {
                 if (!isValidSection(sectionInput)) {
                     cout << "\n\t==========================================" << endl;
                     cout << "\t|              INVALID INPUT!            |" << endl;
-                    cout << "\t| Section must be 4-5 alphanumeric chars.|" << endl;
-                    cout << "\t| No special chars.                      |" << endl;
+                    cout << "\t|  Section must be 4-5 letters/numbers.  |" << endl;
+                    cout << "\t|      PLEASE ENTER A VALID SECTION!     |" << endl;
                     cout << "\t==========================================\n" << endl;
                 }
             } while (!isValidSection(sectionInput));
@@ -2171,8 +2243,8 @@ void RoomReservation::joinWaitlist() {
                 if (!isValidActivityName(activityInput)) {
                     cout << "\n\t==========================================" << endl;
                     cout << "\t|              INVALID INPUT!            |" << endl;
-                    cout << "\t| Activity name must be 10-25 chars.     |" << endl;
-                    cout << "\t==========================================\n" << endl;
+                    cout << "\t|  Activity name must be 10-25 chars.    |" << endl;
+                    cout << "\t==========================================" << endl;
                 }
             } while (!isValidActivityName(activityInput));
             for (char& c : activityInput) c = toupper(c);
@@ -2185,8 +2257,8 @@ void RoomReservation::joinWaitlist() {
                 if (!isValidDate(dateInput)) {
                     cout << "\n\t==========================================" << endl;
                     cout << "\t|              INVALID INPUT!            |" << endl;
-                    cout << "\t| Date must be MM/DD/YYYY, numbers only, |" << endl;
-                    cout << "\t| on/after July 20, 2025, day 1-31.      |" << endl;
+                    cout << "\t|  PLEASE FOLLOW THE FORMAT (MM/DD/YYYY) |" << endl;
+                    cout << "\t| DATE MUST BE ON OR ABOVE JULY 20, 2025 |" << endl;
                     cout << "\t==========================================\n" << endl;
                 }
             } while (!isValidDate(dateInput));
@@ -2200,8 +2272,7 @@ void RoomReservation::joinWaitlist() {
                 if (!isValidTime(startTimeInput)) {
                     cout << "\n\t==========================================" << endl;
                     cout << "\t|              INVALID INPUT!            |" << endl;
-                    cout << "\t| Time must be in format 0AM/0PM,        |" << endl;
-                    cout << "\t| only ':' allowed, no extras.           |" << endl;
+                    cout << "\t|  Format: 0AM/0PM or 0:00AM/PM ONLY.    |" << endl;
                     cout << "\t==========================================\n" << endl;
                 }
             } while (!isValidTime(startTimeInput));
@@ -2215,8 +2286,7 @@ void RoomReservation::joinWaitlist() {
                 if (!isValidTime(endTimeInput)) {
                     cout << "\n\t==========================================" << endl;
                     cout << "\t|              INVALID INPUT!            |" << endl;
-                    cout << "\t| Time must be in format 0AM/0PM,        |" << endl;
-                    cout << "\t| only ':' allowed, no extras.           |" << endl;
+                    cout << "\t|  Format: 0AM/0PM or 0:00AM/PM ONLY.    |" << endl;
                     cout << "\t==========================================\n" << endl;
                 }
             } while (!isValidTime(endTimeInput));
@@ -2229,7 +2299,7 @@ void RoomReservation::joinWaitlist() {
                 if (!isValidParticipants(participantsInput)) {
                     cout << "\n\t==========================================" << endl;
                     cout << "\t|              INVALID INPUT!            |" << endl;
-                    cout << "\t| Must be a number > 1, no extras.       |" << endl;
+                    cout << "\t|      MUST BE A NUMBER AND ABOVE 1!     |" << endl;
                     cout << "\t==========================================\n" << endl;
                 }
             } while (!isValidParticipants(participantsInput));
@@ -2263,8 +2333,8 @@ void RoomReservation::joinWaitlist() {
                 if (!isValidYN(joinConfirmInput)) {
                     cout << "\n\t==========================================" << endl;
                     cout << "\t|              INVALID INPUT!            |" << endl;
-                    cout << "\t|      Type only Y/y or N/n.             |" << endl;
-                    cout << "\t==========================================\n" << endl;
+                    cout << "\t|          Type only Y/y or N/n.         |" << endl;
+                    cout << "\t==========================================" << endl;
                 }
             } while (!isValidYN(joinConfirmInput));
 
@@ -2293,8 +2363,8 @@ void RoomReservation::joinWaitlist() {
                         if (!isValidYN(viewDetailsInput)) {
                             cout << "\n\t==========================================" << endl;
                             cout << "\t|              INVALID INPUT!            |" << endl;
-                            cout << "\t|      Type only Y/y or N/n.             |" << endl;
-                            cout << "\t==========================================\n" << endl;
+                            cout << "\t|          Type only Y/y or N/n.         |" << endl;
+                            cout << "\t==========================================" << endl;
                         }
                     } while (!isValidYN(viewDetailsInput));
                     if (viewDetailsInput[0] == 'Y' || viewDetailsInput[0] == 'y') {
@@ -2315,9 +2385,8 @@ void RoomReservation::joinWaitlist() {
                                 } else {
                                     cout << "\n\t==========================================" << endl;
                                     cout << "\t|              INVALID INPUT!            |" << endl;
-                                    cout << "\t| Enter a valid number between 1-" << totalEntries << ". |" << endl;
-                                    cout << "\t| Only numbers, no letters/special chars.|" << endl;
-                                    cout << "\t==========================================\n" << endl;
+                                    cout << "\t|    PLEASE ENTER AGAIN A VALID NUMBER.  |" << endl;
+                                    cout << "\t==========================================" << endl;
                                 }
                             } while (!validChoice);
                             // Access the selected entry
@@ -2356,8 +2425,8 @@ void RoomReservation::joinWaitlist() {
             if (!isValidYN(moreInput)) {
                 cout << "\n\t==========================================" << endl;
                 cout << "\t|              INVALID INPUT!            |" << endl;
-                cout << "\t|      Type only Y/y or N/n.             |" << endl;
-                cout << "\t==========================================\n" << endl;
+                cout << "\t|          Type only Y/y or N/n.         |" << endl;
+                cout << "\t==========================================" << endl;
             }
         } while (!isValidYN(moreInput));
     }
@@ -2429,9 +2498,8 @@ void RoomReservation::viewMyReservations() {
             if (!isValidStudentNum(studentNumStr)) {
                 cout << "\n\t==========================================" << endl;
                 cout << "\t|              INVALID INPUT!            |" << endl;
-                cout << "\t| Student number must be exactly 9 digits|" << endl;
-                cout << "\t| and only numbers.                      |" << endl;
-                cout << "\t==========================================\n" << endl;
+                cout << "\t|  Student number must be 9 digits only. |" << endl;
+                cout << "\t==========================================" << endl;
             }
         } while (!isValidStudentNum(studentNumStr));
         int studentNumInput = stoi(studentNumStr);
@@ -2446,8 +2514,8 @@ void RoomReservation::viewMyReservations() {
         if (count == 0) {
             cout << "\n\t==========================================" << endl;
             cout << "\t|          APPLICANT NOT FOUND!          |" << endl;
-            cout << "\t|  PLEASE ENTER AN EXISTING STUDENT NUMBER|" << endl;
-            cout << "\t==========================================" << endl;
+            cout << "\t| PLEASE ENTER AN EXISTING STUDENT NUMBER|" << endl;
+            cout << "\t==========================================\n" << endl;
         }
 
         do {
@@ -2456,8 +2524,8 @@ void RoomReservation::viewMyReservations() {
             if (!isValidYN(tryAgainInput)) {
                 cout << "\n\t==========================================" << endl;
                 cout << "\t|              INVALID INPUT!            |" << endl;
-                cout << "\t|      Type only Y/y or N/n.             |" << endl;
-                cout << "\t==========================================\n" << endl;
+                cout << "\t|          Type only Y/y or N/n.         |" << endl;
+                cout << "\t==========================================" << endl;
             }
         } while (!isValidYN(tryAgainInput));
     }
@@ -2465,7 +2533,12 @@ void RoomReservation::viewMyReservations() {
 
 void RoomReservation::viewAllRoomsAndReservations() {
     bool keepViewing = true;
+    bool firstRun = true;
     while (keepViewing) {
+        if (firstRun) {
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            firstRun = false;
+        }
         cout << "  ----------------------------------------------------" << endl;
         cout << "  ****************************************************" << endl;
         cout << "\n  [RSYS: VIEW ALL ROOMS/RESERVATIONS]" << endl;
@@ -2491,9 +2564,8 @@ void RoomReservation::viewAllRoomsAndReservations() {
                 cin.clear();
                 cout << "\n\t==========================================" << endl;
                 cout << "\t|              INVALID INPUT!            |" << endl;
-                cout << "\t|      Enter ONLY 1, 2, or 3.            |" << endl;
-                cout << "\t|      No letters/special characters.     |" << endl;
-                cout << "\t==========================================\n" << endl;
+                cout << "\t|   PLEASE ENTER A VALID OPTION (1-3)!   |" << endl;
+                cout << "\t==========================================" << endl;
             }
         } while (!isValidChoice(choiceInput));
         choice = choiceInput[0] - '0';
