@@ -1803,21 +1803,39 @@ void RoomReservation::deleteRoom() {
 }
 
 void RoomReservation::cancelReservation() {
-    cout << "  ----------------------------------------------------" << endl;	
-    cout << "  ****************************************************" << endl;	
+    cout << "  ----------------------------------------------------" << endl;
+    cout << "  ****************************************************" << endl;
     cout << "\n  [RSYS: CANCEL RESERVATION]" << endl;
-    
-    cin.ignore(); // Clear input buffer once at the beginning
-    
+
+    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear input buffer once at the beginning
+
+    auto isValidStudentNum = [](const string& s) -> bool {
+        return s.length() == 9 && s.find_first_not_of("0123456789") == std::string::npos;
+    };
+    auto isValidYN = [](const string& s) -> bool {
+        return s.length() == 1 && (s[0] == 'Y' || s[0] == 'y' || s[0] == 'N' || s[0] == 'n');
+    };
+    auto isValidChoice = [](const string& s, int max) -> bool {
+        return !s.empty() && s.find_first_not_of("0123456789") == std::string::npos && stoi(s) >= 1 && stoi(s) <= max;
+    };
+
+    string continueCancelInput = "Y";
     bool continueCancellation = true;
-    while (continueCancellation) {
-        int studentNumInput;
-        cout << "\n  [Enter Applicant's Student Number]: ";
-        while (!(cin >> studentNumInput)) {
-            cout << "  [Invalid input. Enter student number]: ";
-            clearInput();
-        }
-        cin.ignore();
+    while (continueCancellation && isValidYN(continueCancelInput) && (continueCancelInput[0] == 'Y' || continueCancelInput[0] == 'y')) {
+        string studentNumStr;
+        // Student number input and validation
+        do {
+            cout << "\n  [Enter Applicant's Student Number]: ";
+            getline(cin, studentNumStr);
+            if (!isValidStudentNum(studentNumStr)) {
+                cout << "\n\t==========================================" << endl;
+                cout << "\t|              INVALID INPUT!            |" << endl;
+                cout << "\t| Student number must be exactly 9 digits|" << endl;
+                cout << "\t| and only numbers.                      |" << endl;
+                cout << "\t==========================================\n" << endl;
+            }
+        } while (!isValidStudentNum(studentNumStr));
+        int studentNumInput = stoi(studentNumStr);
 
         // Find reservations by student number
         vector<ReservationNode*> userReservations;
@@ -1829,12 +1847,19 @@ void RoomReservation::cancelReservation() {
 
         if (userReservations.empty()) {
             cout << "\n  [RSYS: No reservations found for student number '" << studentNumInput << "' :C]" << endl;
-            char tryAnother;
-            cout << "\n  [Try another student number? (Y/N)]: ";
-            cin >> tryAnother;
-            cin.ignore();
-            if (tryAnother != 'Y' && tryAnother != 'y') {
-                continueCancellation = false;
+            string tryAnotherInput;
+            do {
+                cout << "\n  [Try another student number? (Y/N)]: ";
+                getline(cin, tryAnotherInput);
+                if (!isValidYN(tryAnotherInput)) {
+                    cout << "\n\t==========================================" << endl;
+                    cout << "\t|              INVALID INPUT!            |" << endl;
+                    cout << "\t|      Type only Y/y or N/n.             |" << endl;
+                    cout << "\t==========================================\n" << endl;
+                }
+            } while (!isValidYN(tryAnotherInput));
+            if (tryAnotherInput[0] != 'Y' && tryAnotherInput[0] != 'y') {
+                break;
             }
             continue;
         }
@@ -1848,31 +1873,39 @@ void RoomReservation::cancelReservation() {
 
         bool continueWithThisUser = true;
         while (continueWithThisUser) {
-            int reservationChoice;
+            string reservationChoiceStr;
+            int reservationChoice = 0;
             bool validChoice = false;
-
-            while (!validChoice) {
+            do {
                 cout << "\n  [Which reservation to cancel? (1-" << userReservations.size() << ")]: ";
-                if (cin >> reservationChoice) {
-                    if (reservationChoice >= 1 && reservationChoice <= userReservations.size()) {
-                        validChoice = true;
-                    }
+                getline(cin, reservationChoiceStr);
+                if (isValidChoice(reservationChoiceStr, userReservations.size())) {
+                    reservationChoice = stoi(reservationChoiceStr);
+                    validChoice = true;
+                } else {
+                    cout << "\n\t==========================================" << endl;
+                    cout << "\t|              INVALID INPUT!            |" << endl;
+                    cout << "\t| Enter a valid number between 1-" << userReservations.size() << ". |" << endl;
+                    cout << "\t| Only numbers, no letters/special chars.|" << endl;
+                    cout << "\t==========================================\n" << endl;
                 }
-                if (!validChoice) {
-                    cout << "  [Invalid choice. Please enter a number between 1-" << userReservations.size() << "]" << endl;
-                    clearInput();
-                }
-            }
-            cin.ignore();
+            } while (!validChoice);
 
             // Confirmation
             cout << "\n  [RSYS: CONFIRMATION]" << endl;
-            char confirm;
-            cout << "\n  [Confirm cancellation? (Y/N)]: ";
-            cin >> confirm;
-            cin.ignore();
+            string confirmInput;
+            do {
+                cout << "\n  [Confirm cancellation? (Y/N)]: ";
+                getline(cin, confirmInput);
+                if (!isValidYN(confirmInput)) {
+                    cout << "\n\t==========================================" << endl;
+                    cout << "\t|              INVALID INPUT!            |" << endl;
+                    cout << "\t|      Type only Y/y or N/n.             |" << endl;
+                    cout << "\t==========================================\n" << endl;
+                }
+            } while (!isValidYN(confirmInput));
 
-            if (confirm == 'Y' || confirm == 'y') {
+            if (confirmInput[0] == 'Y' || confirmInput[0] == 'y') {
                 // Get the reservation to be cancelled
                 ReservationNode reservationToCancel = *userReservations[reservationChoice - 1];
 
@@ -1901,12 +1934,18 @@ void RoomReservation::cancelReservation() {
                     cout << "\n   -------------------------------------------------- ";
                     cout << "\n  ====================================================" << endl;
 
-                    char cancelAnother;
-                    cout << "\n  [Cancel another reservation? (Y/N)]: ";
-                    cin >> cancelAnother;
-                    cin.ignore();
-
-                    if (cancelAnother != 'Y' && cancelAnother != 'y') {
+                    string cancelAnotherInput;
+                    do {
+                        cout << "\n  [Cancel another reservation? (Y/N)]: ";
+                        getline(cin, cancelAnotherInput);
+                        if (!isValidYN(cancelAnotherInput)) {
+                            cout << "\n\t==========================================" << endl;
+                            cout << "\t|              INVALID INPUT!            |" << endl;
+                            cout << "\t|      Type only Y/y or N/n.             |" << endl;
+                            cout << "\t==========================================\n" << endl;
+                        }
+                    } while (!isValidYN(cancelAnotherInput));
+                    if (cancelAnotherInput[0] != 'Y' && cancelAnotherInput[0] != 'y') {
                         continueCancellation = false;
                         continueWithThisUser = false;
                     } else {
@@ -1920,11 +1959,18 @@ void RoomReservation::cancelReservation() {
             } else {
                 cout << "\n  [Cancellation aborted.]" << endl;
                 // After cancellation is aborted, ask if user wants to try another student number
-                char tryAnother;
-                cout << "\n  [Try another student number? (Y/N)]: ";
-                cin >> tryAnother;
-                cin.ignore();
-                if (tryAnother != 'Y' && tryAnother != 'y') {
+                string tryAnotherInput;
+                do {
+                    cout << "\n  [Try another student number? (Y/N)]: ";
+                    getline(cin, tryAnotherInput);
+                    if (!isValidYN(tryAnotherInput)) {
+                        cout << "\n\t==========================================" << endl;
+                        cout << "\t|              INVALID INPUT!            |" << endl;
+                        cout << "\t|      Type only Y/y or N/n.             |" << endl;
+                        cout << "\t==========================================\n" << endl;
+                    }
+                } while (!isValidYN(tryAnotherInput));
+                if (tryAnotherInput[0] != 'Y' && tryAnotherInput[0] != 'y') {
                     continueCancellation = false;
                 }
                 continueWithThisUser = false;
